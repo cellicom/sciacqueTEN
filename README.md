@@ -1,4 +1,4 @@
-# SciacqueTEN 🎓
+# SciacqueTEN 🎓 [sciacqueTEN](https://github.com/cellicom/sciacqueTEN)
 
 A modern, fast, and light web-based tool designed for teachers to convert student exam scores into a base-10 scale (typically used in Italian schools).
 
