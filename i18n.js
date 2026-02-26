@@ -20,6 +20,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Invio rapido:</strong> Premi il tasto 'Invio' mentre scrivi un punteggio per aggiungerne automaticamente uno nuovo.",
         helpFeatureVoice: "<strong>Comandi Vocali:</strong> Clicca sul microfono per iniziare. Pronuncia i numeri per aggiungerli alla lista.",
         helpFeatureVoiceStop: "<strong>Fermati:</strong> Pronuncia 'Stop' o 'Ferma' per terminare la registrazione vocale.",
+        helpFeatureFormat: "<strong>Formato Voti:</strong> Usa lo switch in alto a destra nei risultati per scegliere tra il formato '½' e '.5'.",
         btnClose: "Chiudi"
     },
     en: {
@@ -43,6 +44,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Quick Add:</strong> Press 'Enter' while typing a score to automatically add a new one.",
         helpFeatureVoice: "<strong>Voice Commands:</strong> Click the microphone to start. Speak numbers to add them to the list.",
         helpFeatureVoiceStop: "<strong>Stop Recording:</strong> Say 'Stop' or 'Halt' to end voice recording.",
+        helpFeatureFormat: "<strong>Grade Format:</strong> Use the switch in the top right of the results to choose between '½' and '.5' formats.",
         btnClose: "Close"
     }
 };

@@ -26,7 +26,7 @@
 
             <div class="col-md-6 text-center">
                 <h1 class="fw-bold title-font text-primary mb-0 sciacqueten-title">
-                    <i class="bi bi-pencil-fill me-2 small"></i>SciacqueTEN
+                    👩🏻‍🏫 SciacqueTEN
                 </h1>
             </div>
 
@@ -90,7 +90,14 @@
 
                     <div class="col-md-6">
                         <div class="glass-card shadow-sm h-100">
-                            <h5 class="mb-4" id="lblResults">Risultati</h5>
+                            <div class="result-header mb-4">
+                                <h5 class="mb-0" id="lblResults">Risultati</h5>
+                                <div class="format-switch" id="formatSwitch">
+                                    <div class="format-switch-slider"></div>
+                                    <div class="format-switch-option active" data-mode="half">½</div>
+                                    <div class="format-switch-option" data-mode="decimal">.5</div>
+                                </div>
+                            </div>
 
                             <div class="mb-4 text-center border-bottom pb-4">
                                 <small class="text-muted d-block text-uppercase fw-bold mb-1" id="lblSummary">Punteggio
@@ -100,26 +107,42 @@
 
                             <div class="row g-3">
                                 <div class="col-6">
-                                    <div class="result-badge">
+                                    <div class="result-badge h-100 d-flex flex-column justify-content-center">
                                         <small class="text-muted d-block" id="lblDecimal">Decimale</small>
                                         <span class="fs-4 fw-bold" id="resDecimal">-</span>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="result-badge border-primary">
-                                        <small class="text-primary d-block fw-semibold"
-                                            id="lblSuggested">Suggerito</small>
-                                        <span class="fs-4 fw-bold text-primary" id="resSuggested">-</span>
+                                    <div class="flip-card" id="gradeFlipCard">
+                                        <div class="flip-card-inner">
+                                            <div class="flip-card-front">
+                                                <div
+                                                    class="result-badge border-primary h-100 d-flex flex-column justify-content-center">
+                                                    <small class="text-primary d-block fw-semibold"
+                                                        id="lblSuggested">Suggerito</small>
+                                                    <span class="fs-4 fw-bold text-primary" id="resSuggested">-</span>
+                                                </div>
+                                            </div>
+                                            <div class="flip-card-back">
+                                                <div
+                                                    class="result-badge border-primary h-100 d-flex flex-column justify-content-center">
+                                                    <small class="text-primary d-block fw-semibold"
+                                                        id="lblSuggestedBack">Suggerito</small>
+                                                    <span class="fs-4 fw-bold text-primary"
+                                                        id="resSuggestedBackVal">-</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="result-badge">
+                                    <div class="result-badge h-100 d-flex flex-column justify-content-center">
                                         <small class="text-muted d-block" id="lblFloor">Difetto</small>
                                         <span class="fs-4 fw-bold" id="resFloor">-</span>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="result-badge">
+                                    <div class="result-badge h-100 d-flex flex-column justify-content-center">
                                         <small class="text-muted d-block" id="lblCeil">Eccesso</small>
                                         <span class="fs-4 fw-bold" id="resCeil">-</span>
                                     </div>
@@ -161,9 +184,13 @@
                             <i class="bi bi-mic text-primary me-3 fs-5"></i>
                             <span id="helpFeatureVoice"></span>
                         </li>
-                        <li class="d-flex align-items-start">
+                        <li class="mb-3 d-flex align-items-start">
                             <i class="bi bi-stop-circle text-primary me-3 fs-5"></i>
                             <span id="helpFeatureVoiceStop"></span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-arrow-left-right text-primary me-3 fs-5"></i>
+                            <span id="helpFeatureFormat"></span>
                         </li>
                     </ul>
                 </div>

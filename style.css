@@ -329,3 +329,90 @@ select.lang-select option {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+/* Flip Card Animation */
+.flip-card {
+    background-color: transparent;
+    perspective: 1000px;
+    height: 100%;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    display: grid;
+    grid-template-areas: "overlap";
+}
+
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    grid-area: overlap;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: block;
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+}
+
+/* Custom Switch Styling */
+.format-switch {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    /* Darker background for visibility */
+    padding: 3px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    width: 80px;
+    height: 36px;
+}
+
+.format-switch-option {
+    flex: 1;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: bold;
+    z-index: 1;
+    transition: var(--transition);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.format-switch-option.active {
+    color: white;
+}
+
+.format-switch-slider {
+    position: absolute;
+    width: 36px;
+    height: 28px;
+    background: var(--primary-color) !important;
+    border-radius: 15px;
+    transition: var(--transition);
+    left: 3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.format-switch.mode-decimal .format-switch-slider {
+    left: 40px;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

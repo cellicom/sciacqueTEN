@@ -3,16 +3,16 @@ const translations = window.translations;
 const availableLanguages = window.availableLanguages;
 
 const schoolGrades = [
-    { value: 0, label: "0" }, { value: 0.25, label: "0+" }, { value: 0.5, label: "0.5" }, { value: 0.75, label: "1-" },
-    { value: 1, label: "1" }, { value: 1.25, label: "1+" }, { value: 1.5, label: "1.5" }, { value: 1.75, label: "2-" },
-    { value: 2, label: "2" }, { value: 2.25, label: "2+" }, { value: 2.5, label: "2.5" }, { value: 2.75, label: "3-" },
-    { value: 3, label: "3" }, { value: 3.25, label: "3+" }, { value: 3.5, label: "3.5" }, { value: 3.75, label: "4-" },
-    { value: 4, label: "4" }, { value: 4.25, label: "4+" }, { value: 4.5, label: "4.5" }, { value: 4.75, label: "5-" },
-    { value: 5, label: "5" }, { value: 5.25, label: "5+" }, { value: 5.5, label: "5.5" }, { value: 5.75, label: "6-" },
-    { value: 6, label: "6" }, { value: 6.25, label: "6+" }, { value: 6.5, label: "6.5" }, { value: 6.75, label: "7-" },
-    { value: 7, label: "7" }, { value: 7.25, label: "7+" }, { value: 7.5, label: "7.5" }, { value: 7.75, label: "8-" },
-    { value: 8, label: "8" }, { value: 8.25, label: "8+" }, { value: 8.5, label: "8.5" }, { value: 8.75, label: "9-" },
-    { value: 9, label: "9" }, { value: 9.25, label: "9+" }, { value: 9.5, label: "9.5" }, { value: 9.75, label: "10-" },
+    { value: 0, label: "0" }, { value: 0.25, label: "0+" }, { value: 0.5, label: "½" }, { value: 0.75, label: "1-" },
+    { value: 1, label: "1" }, { value: 1.25, label: "1+" }, { value: 1.5, label: "1 ½" }, { value: 1.75, label: "2-" },
+    { value: 2, label: "2" }, { value: 2.25, label: "2+" }, { value: 2.5, label: "2 ½" }, { value: 2.75, label: "3-" },
+    { value: 3, label: "3" }, { value: 3.25, label: "3+" }, { value: 3.5, label: "3 ½" }, { value: 3.75, label: "4-" },
+    { value: 4, label: "4" }, { value: 4.25, label: "4+" }, { value: 4.5, label: "4 ½" }, { value: 4.75, label: "5-" },
+    { value: 5, label: "5" }, { value: 5.25, label: "5+" }, { value: 5.5, label: "5 ½" }, { value: 5.75, label: "6-" },
+    { value: 6, label: "6" }, { value: 6.25, label: "6+" }, { value: 6.5, label: "6 ½" }, { value: 6.75, label: "7-" },
+    { value: 7, label: "7" }, { value: 7.25, label: "7+" }, { value: 7.5, label: "7 ½" }, { value: 7.75, label: "8-" },
+    { value: 8, label: "8" }, { value: 8.25, label: "8+" }, { value: 8.5, label: "8 ½" }, { value: 8.75, label: "9-" },
+    { value: 9, label: "9" }, { value: 9.25, label: "9+" }, { value: 9.5, label: "9 ½" }, { value: 9.75, label: "10-" },
     { value: 10, label: "10" }
 ];
 
@@ -20,7 +20,8 @@ let state = {
     maxScore: '10',
     scores: [''],
     lang: 'it',
-    theme: 'light'
+    theme: 'light',
+    formatMode: 'half' // 'half' or 'decimal'
 };
 
 // DOM Elements
@@ -39,6 +40,9 @@ const elements = {
     themeToggle: document.getElementById('themeToggle'),
     themeIcon: document.getElementById('themeIcon'),
     voiceToggle: document.getElementById('voiceToggle'),
+    formatSwitch: document.getElementById('formatSwitch'),
+    gradeFlipCard: document.getElementById('gradeFlipCard'),
+    resSuggestedBackVal: document.getElementById('resSuggestedBackVal'),
     html: document.documentElement
 };
 
@@ -50,6 +54,7 @@ function init() {
     renderScores();
     updateTranslations();
     applyTheme();
+    applyFormatMode();
     calculate();
 }
 
@@ -102,18 +107,28 @@ function calculate() {
         const suggested = getSuggestedGrade(result);
         elements.resSuggested.textContent = suggested;
 
+        // Populate back card with decimal format (.5)
+        const suggestedDecimal = getSuggestedGrade(result, true);
+        elements.resSuggestedBackVal.textContent = suggestedDecimal;
+
         // Color coding logic
         const decimalPass = result >= 6;
         const suggestedVal = Math.round(result * 4) / 4;
         const suggestedPass = suggestedVal >= 6;
 
         const lblSuggested = document.getElementById('lblSuggested');
+        const lblSuggestedBack = document.getElementById('lblSuggestedBack');
         const lblDecimal = document.getElementById('lblDecimal');
 
-        // Suggested Grade Styling
+        // Suggested Grade Styling (Front)
         elements.resSuggested.className = 'fs-4 fw-bold ' + (suggestedPass ? 'grade-text-success' : 'grade-text-danger');
-        elements.resSuggested.parentElement.className = 'result-badge border-primary ' + (suggestedPass ? 'grade-success' : 'grade-danger');
+        elements.resSuggested.parentElement.className = 'result-badge border-primary h-100 ' + (suggestedPass ? 'grade-success' : 'grade-danger');
         lblSuggested.className = 'd-block fw-semibold mb-1 ' + (suggestedPass ? 'lbl-suggested-success' : 'lbl-suggested-danger');
+
+        // Suggested Grade Styling (Back)
+        elements.resSuggestedBackVal.className = 'fs-4 fw-bold ' + (suggestedPass ? 'grade-text-success' : 'grade-text-danger');
+        elements.resSuggestedBackVal.parentElement.className = 'result-badge border-primary h-100 ' + (suggestedPass ? 'grade-success' : 'grade-danger');
+        lblSuggestedBack.className = 'd-block fw-semibold mb-1 ' + (suggestedPass ? 'lbl-suggested-success' : 'lbl-suggested-danger');
 
         // Decimal Grade Styling
         elements.resDecimal.className = 'fs-4 fw-bold ' + (decimalPass ? 'grade-text-success' : 'grade-text-danger');
@@ -121,17 +136,23 @@ function calculate() {
         lblDecimal.className = 'd-block fw-semibold mb-1 ' + (decimalPass ? 'lbl-suggested-success' : 'lbl-suggested-danger');
     } else {
         const lblSuggested = document.getElementById('lblSuggested');
+        const lblSuggestedBack = document.getElementById('lblSuggestedBack');
         const lblDecimal = document.getElementById('lblDecimal');
 
         elements.resDecimal.textContent = '-';
         elements.resFloor.textContent = '-';
         elements.resCeil.textContent = '-';
         elements.resSuggested.textContent = '-';
+        elements.resSuggestedBackVal.textContent = '-';
 
         // Reset styles
         elements.resSuggested.className = 'fs-4 fw-bold text-primary';
-        elements.resSuggested.parentElement.className = 'result-badge border-primary';
+        elements.resSuggested.parentElement.className = 'result-badge border-primary h-100';
         lblSuggested.className = 'text-muted d-block fw-semibold';
+
+        elements.resSuggestedBackVal.className = 'fs-4 fw-bold text-primary';
+        elements.resSuggestedBackVal.parentElement.className = 'result-badge border-primary h-100';
+        lblSuggestedBack.className = 'text-muted d-block fw-semibold';
 
         elements.resDecimal.className = 'fs-4 fw-bold text-primary';
         elements.resDecimal.parentElement.className = 'result-badge border-primary';
@@ -139,11 +160,21 @@ function calculate() {
     }
 }
 
-function getSuggestedGrade(val) {
+function getSuggestedGrade(val, forceDecimal = false) {
     // Round to nearest 0.25
     const rounded = Math.round(val * 4) / 4;
     const grade = schoolGrades.find(g => Math.abs(g.value - rounded) < 0.001);
-    return grade ? grade.label : rounded.toFixed(1);
+
+    if (grade) {
+        if (forceDecimal && grade.label.includes('½')) {
+            return grade.label.replace('½', '.5').trim();
+        }
+        if (forceDecimal && grade.label === '½') {
+            return '0.5';
+        }
+        return grade.label;
+    }
+    return rounded.toFixed(1);
 }
 
 // UI Rendering
@@ -209,6 +240,7 @@ function updateTranslations() {
     document.getElementById('lblFloor').textContent = t.lblFloor;
     document.getElementById('lblCeil').textContent = t.lblCeil;
     document.getElementById('lblSuggested').textContent = t.lblSuggested;
+    document.getElementById('lblSuggestedBack').textContent = t.lblSuggested;
     document.getElementById('lblSummary').textContent = t.lblSummary;
 
     // Modal translations
@@ -217,6 +249,7 @@ function updateTranslations() {
     document.getElementById('helpFeatureEnter').innerHTML = t.helpFeatureEnter;
     document.getElementById('helpFeatureVoice').innerHTML = t.helpFeatureVoice;
     document.getElementById('helpFeatureVoiceStop').innerHTML = t.helpFeatureVoiceStop;
+    document.getElementById('helpFeatureFormat').innerHTML = t.helpFeatureFormat;
     document.getElementById('btnCloseModal').textContent = t.btnClose;
 
     elements.maxScore.placeholder = t.placeholderMax;
@@ -268,6 +301,30 @@ elements.langSelect.addEventListener('change', (e) => {
 elements.themeToggle.addEventListener('click', () => {
     state.theme = state.theme === 'light' ? 'dark' : 'light';
     applyTheme();
+    saveState();
+});
+
+function applyFormatMode() {
+    const isDecimal = state.formatMode === 'decimal';
+    elements.gradeFlipCard.classList.toggle('flipped', isDecimal);
+    elements.formatSwitch.classList.toggle('mode-decimal', isDecimal);
+
+    // Update active class on switch options
+    const options = elements.formatSwitch.querySelectorAll('.format-switch-option');
+    options.forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.mode === state.formatMode);
+    });
+}
+
+elements.formatSwitch.addEventListener('click', (e) => {
+    const option = e.target.closest('.format-switch-option');
+    if (option) {
+        state.formatMode = option.dataset.mode;
+    } else {
+        // Toggle if clicking background
+        state.formatMode = state.formatMode === 'half' ? 'decimal' : 'half';
+    }
+    applyFormatMode();
     saveState();
 });
 
