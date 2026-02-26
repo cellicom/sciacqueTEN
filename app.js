@@ -48,6 +48,7 @@ const elements = {
     audioWaveCanvas: document.getElementById('audioWaveCanvas'),
     rawVoiceDebug: document.getElementById('rawVoiceDebug'),
     btnStopRecordingModal: document.getElementById('btnStopRecordingModal'),
+    btnRestartRecordingModal: document.getElementById('btnRestartRecordingModal'), // New button
     html: document.documentElement
 };
 
@@ -261,6 +262,9 @@ function updateTranslations() {
     document.getElementById('lblVoiceStopInstruction').innerHTML = t.lblVoiceStopInstruction;
     document.getElementById('lblRawVoiceTitle').textContent = t.lblRawVoiceTitle;
     document.getElementById('lblStopRecordingBtn').textContent = t.lblStopRecordingBtn;
+    if (document.getElementById('lblRestartRecordingBtn')) {
+        document.getElementById('lblRestartRecordingBtn').textContent = t.lblRestartRecordingBtn;
+    }
 
     elements.maxScore.placeholder = t.placeholderMax;
     elements.langSelect.value = state.lang;
@@ -367,6 +371,11 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         elements.voiceToggle.classList.add('btn-danger'); // Add active color
         elements.recordingModal.show();
         elements.rawVoiceDebug.textContent = "...";
+
+        // Hide restart button, show stop button
+        elements.btnStopRecordingModal.style.display = 'inline-block';
+        if (elements.btnRestartRecordingModal) elements.btnRestartRecordingModal.style.display = 'none';
+
         initAudioWave();
     };
 
@@ -388,10 +397,13 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
     recognition.onend = () => {
         if (isRecording) {
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error("Recognition already started or error restarting", e);
+            // Mobile (iOS especially) closes the connection after a silence. 
+            // Instead of auto-restarting (which can be blocked), we show a manual restart button.
+            stopAudioWave();
+            elements.btnStopRecordingModal.style.display = 'none';
+            if (elements.btnRestartRecordingModal) {
+                elements.btnRestartRecordingModal.style.display = 'inline-block';
+                elements.rawVoiceDebug.innerHTML += `<br><span class="text-danger small">${translations[state.lang].lblVoicePaused}</span>`;
             }
         } else {
             stopAudioWave();
@@ -461,12 +473,79 @@ const wordToNumberMap = {
     'eighty-six': '86', 'eighty-seven': '87', 'eighty-eight': '88', 'eighty-nine': '89', 'ninety': '90',
     'ninety-one': '91', 'ninety-two': '92', 'ninety-three': '93', 'ninety-four': '94', 'ninety-five': '95',
     'ninety-six': '96', 'ninety-seven': '97', 'ninety-eight': '98', 'ninety-nine': '99', 'one hundred': '100',
-    'half': '.5', 'point': '.', 'dot': '.', 'and a half': '.5'
+    'half': '.5', 'point': '.', 'dot': '.', 'and a half': '.5',
+
+    // French (0-100)
+    'zéro': '0', 'un': '1', 'deux': '2', 'trois': '3', 'quatre': '4', 'cinq': '5', 'six': '6', 'sept': '7', 'huit': '8', 'neuf': '9', 'dix': '10',
+    'onze': '11', 'douze': '12', 'treize': '13', 'quatorze': '14', 'quinze': '15', 'seize': '16', 'dix-sept': '17', 'dix-huit': '18', 'dix-neuf': '19', 'vingt': '20',
+    'vingt et un': '21', 'vingt-deux': '22', 'vingt-trois': '23', 'vingt-quatre': '24', 'vingt-cinq': '25', 'vingt-six': '26', 'vingt-sept': '27', 'vingt-huit': '28', 'vingt-neuf': '29', 'trente': '30',
+    'trente et un': '31', 'trente-deux': '32', 'trente-trois': '33', 'trente-quatre': '34', 'trente-cinq': '35', 'trente-six': '36', 'trente-sept': '37', 'trente-huit': '38', 'trente-neuf': '39', 'quarante': '40',
+    'quarante et un': '41', 'quarante-deux': '42', 'quarante-trois': '43', 'quarante-quatre': '44', 'quarante-cinq': '45', 'quarante-six': '46', 'quarante-sept': '47', 'quarante-huit': '48', 'quarante-neuf': '49', 'cinquante': '50',
+    'cinquante et un': '51', 'cinquante-deux': '52', 'cinquante-trois': '53', 'cinquante-quatre': '54', 'cinquante-cinq': '55', 'cinquante-six': '56', 'cinquante-sept': '57', 'cinquante-huit': '58', 'cinquante-neuf': '59', 'soixante': '60',
+    'soixante et un': '61', 'soixante-deux': '62', 'soixante-trois': '63', 'soixante-quatre': '64', 'soixante-cinq': '65', 'soixante-six': '66', 'soixante-sept': '67', 'soixante-huit': '68', 'soixante-neuf': '69', 'soixante-dix': '70',
+    'soixante et onze': '71', 'soixante-douze': '72', 'soixante-treize': '73', 'soixante-quatorze': '74', 'soixante-quinze': '75', 'soixante-seize': '76', 'soixante-dix-sept': '77', 'soixante-dix-huit': '78', 'soixante-dix-neuf': '79', 'quatre-vingts': '80',
+    'quatre-vingt-un': '81', 'quatre-vingt-deux': '82', 'quatre-vingt-trois': '83', 'quatre-vingt-quatre': '84', 'quatre-vingt-cinq': '85', 'quatre-vingt-six': '86', 'quatre-vingt-sept': '87', 'quatre-vingt-huit': '88', 'quatre-vingt-neuf': '89', 'quatre-vingt-dix': '90',
+    'quatre-vingt-onze': '91', 'quatre-vingt-douze': '92', 'quatre-vingt-treize': '93', 'quatre-vingt-quatorze': '94', 'quatre-vingt-quinze': '95', 'quatre-vingt-seize': '96', 'quatre-vingt-dix-sept': '97', 'quatre-vingt-dix-huit': '98', 'quatre-vingt-dix-neuf': '99', 'cent': '100',
+    'virgule': '.', 'et demi': '.5', 'demi': '.5',
+
+    // Spanish (0-100)
+    'cero': '0', 'uno': '1', 'una': '1', 'dos': '2', 'tres': '3', 'cuatro': '4', 'cinco': '5', 'seis': '6', 'siete': '7', 'ocho': '8', 'nueve': '9', 'diez': '10',
+    'once': '11', 'doce': '12', 'trece': '13', 'catorce': '14', 'quince': '15', 'dieciséis': '16', 'diecisiete': '17', 'dieciocho': '18', 'diecinueve': '19', 'veinte': '20',
+    'veintiuno': '21', 'veintidós': '22', 'veintitres': '23', 'veinticuatro': '24', 'veinticinco': '25', 'veintiseis': '26', 'veintisiete': '27', 'veintiocho': '28', 'veintinueve': '29', 'treinta': '30',
+    'treinta y uno': '31', 'treinta y dos': '32', 'treinta y tres': '33', 'treinta y cuatro': '34', 'treinta y cinco': '35', 'treinta y seis': '36', 'treinta y siete': '37', 'treinta y ocho': '38', 'treinta y nueve': '39', 'cuarenta': '40',
+    'cuarenta y uno': '41', 'cuarenta y dos': '42', 'cuarenta y tres': '43', 'cuarenta y cuatro': '44', 'cuarenta y cinco': '45', 'cuarenta y seis': '46', 'cuarenta y siete': '47', 'cuarenta y ocho': '48', 'cuarenta y nueve': '49', 'cincuenta': '50',
+    'cincuenta y uno': '51', 'cincuenta y dos': '52', 'cincuenta y tres': '53', 'cincuenta y cuatro': '54', 'cincuenta y cinco': '55', 'cincuenta y seis': '56', 'cincuenta y siete': '57', 'cincuenta y ocho': '58', 'cincuenta y nueve': '59', 'sesenta': '60',
+    'sesenta y uno': '61', 'sesenta y dos': '62', 'sesenta y tres': '63', 'sesenta y cuatro': '64', 'sesenta y cinco': '65', 'sesenta y seis': '66', 'sesenta y siete': '67', 'sesenta y ocho': '68', 'sesenta y nueve': '69', 'setenta': '70',
+    'setenta y uno': '71', 'setenta y dos': '72', 'setenta y tres': '73', 'setenta y cuatro': '74', 'setenta y cinco': '75', 'setenta y seis': '76', 'setenta y siete': '77', 'setenta y ocho': '78', 'setenta y nueve': '79', 'ochenta': '80',
+    'ochenta y uno': '81', 'ochenta y dos': '82', 'ochenta y tres': '83', 'ochenta y cuatro': '84', 'ochenta y cinco': '85', 'ochenta y seis': '86', 'ochenta y siete': '87', 'ochenta y ocho': '88', 'ochenta y nueve': '89', 'noventa': '90',
+    'noventa y uno': '91', 'noventa y dos': '92', 'noventa y tres': '93', 'noventa y cuatro': '94', 'noventa y cinco': '95', 'noventa y seis': '96', 'noventa y siete': '97', 'noventa y ocho': '98', 'noventa y nueve': '99', 'cien': '100',
+    'coma': '.', 'y medio': '.5', 'medio': '.5',
+
+    // German (0-100)
+    'null': '0', 'eins': '1', 'zwei': '2', 'drei': '3', 'vier': '4', 'fünf': '5', 'sechs': '6', 'sieben': '7', 'acht': '8', 'neun': '9', 'zehn': '10',
+    'elf': '11', 'zwölf': '12', 'dreizehn': '13', 'vierzehn': '14', 'fünfzehn': '15', 'sechzehn': '16', 'siebzehn': '17', 'achtzehn': '18', 'neunzehn': '19', 'zwanzig': '20',
+    'einundzwanzig': '21', 'zweiundzwanzig': '22', 'dreiundzwanzig': '23', 'vierundzwanzig': '24', 'fünfundzwanzig': '25', 'sechsundzwanzig': '26', 'siebenundzwanzig': '27', 'achtundzwanzig': '28', 'neunundzwanzig': '29', 'dreißig': '30',
+    'einunddreißig': '31', 'zweiunddreißig': '32', 'dreiunddreißig': '33', 'vierunddreißig': '34', 'fünfunddreißig': '35', 'sechsunddreißig': '36', 'siebenunddreißig': '37', 'achtunddreißig': '38', 'neununddreißig': '39', 'vierzig': '40',
+    'einundvierzig': '41', 'zweiundvierzig': '42', 'dreiundvierzig': '43', 'vierundvierzig': '44', 'fünfundvierzig': '45', 'sechsundvierzig': '46', 'siebenundvierzig': '47', 'achtundvierzig': '48', 'neunundvierzig': '49', 'fünfzig': '50',
+    'einundfünfzig': '51', 'zweiundfünfzig': '52', 'dreiundfünfzig': '53', 'vierundfünfzig': '54', 'fünfundfünfzig': '55', 'sechsundfünfzig': '56', 'siebenundfünfzig': '57', 'achtundfünfzig': '58', 'neunundfünfzig': '59', 'sechzig': '60',
+    'einundsechzig': '61', 'zweiundsechzig': '62', 'dreiundsechzig': '63', 'vierundsechzig': '64', 'fünfundsechzig': '65', 'sechsundsechzig': '66', 'siebenundsechzig': '67', 'achtundsechzig': '68', 'neunundsechzig': '69', 'siebzig': '70',
+    'einundsiebzig': '71', 'zweiundsiebzig': '72', 'dreiundsiebzig': '73', 'vierundsiebzig': '74', 'fünfundsiebzig': '75', 'sechsundsiebzig': '76', 'siebenundsiebzig': '77', 'achtundsiebzig': '78', 'neunundsiebzig': '79', 'achtzig': '80',
+    'einundachtzig': '81', 'zweiundachtzig': '82', 'dreiundachtzig': '83', 'vierundachtzig': '84', 'fünfundachtzig': '85', 'sechsundachtzig': '86', 'siebenundachtzig': '87', 'achtundachtzig': '88', 'neunundachtzig': '89', 'neunzig': '90',
+    'einundneunzig': '91', 'zweiundneunzig': '92', 'dreiundneunzig': '93', 'vierundneunzig': '94', 'fünfundneunzig': '95', 'sechsundneunzig': '96', 'siebenundneunzig': '97', 'achtundneunzig': '98', 'neunundneunzig': '99', 'hundert': '100',
+    'komma': '.', 'und ein halb': '.5', 'halb': '.5',
+
+    // Russian (0-100)
+    'ноль': '0', 'один': '1', 'два': '2', 'три': '3', 'четыре': '4', 'пять': '5', 'шесть': '6', 'семь': '7', 'восемь': '8', 'девять': '9', 'десять': '10',
+    'одинадцать': '11', 'двенадцать': '12', 'тринадцать': '13', 'четырнадцать': '14', 'пятнадцать': '15', 'шестнадцать': '16', 'семнадцать': '17', 'восемнадцать': '18', 'девятнадцать': '19', 'двадцать': '20',
+    'двадцать один': '21', 'двадцать два': '22', 'двадцать три': '23', 'двадцать четыре': '24', 'двадцать пять': '25', 'двадцать шесть': '26', 'двадцать семь': '27', 'двадцать восемь': '28', 'двадцать девять': '29', 'тридцать': '30',
+    'тридцать один': '31', 'тридцать два': '32', 'тридцать три': '33', 'тридцать четыре': '34', 'тридцать пять': '35', 'тридцать шесть': '36', 'тридцать семь': '37', 'тридцать восемь': '38', 'тридцать девять': '39', 'сорок': '40',
+    'сорок один': '41', 'сорок два': '42', 'сорок три': '43', 'сорок четыре': '44', 'сорок пять': '45', 'сорок шесть': '46', 'сорок семь': '47', 'сорок восемь': '48', 'сорок девять': '49', 'пятьдесят': '50',
+    'пятьдесят один': '51', 'пятьдесят два': '52', 'пятьдесят три': '53', 'пятьдесят четыре': '54', 'пятьдесят пять': '55', 'пятьдесят шесть': '56', 'пятьдесят семь': '57', 'пятьдесят восемь': '58', 'пятьдесят девять': '59', 'шестьдесят': '60',
+    'шестьдесят один': '61', 'шестьдесят два': '62', 'шестьдесят три': '63', 'шестьдесят четыре': '64', 'шестьдесят пять': '65', 'шестьдесят шесть': '66', 'шестьдесят семь': '67', 'шестьдесят восемь': '68', 'шестьдесят девять': '69', 'семьдесят': '70',
+    'семьдесят один': '71', 'семьдесят два': '72', 'семьдесят три': '73', 'семьдесят четыре': '74', 'семьдесят пять': '75', 'семьдесят шесть': '76', 'семьдесят семь': '77', 'семьдесят восемь': '78', 'семьдесят девять': '79', 'восемьдесят': '80',
+    'восемьдесят один': '81', 'восемьдесят два': '82', 'восемьдесят три': '83', 'восемьдесят четыре': '84', 'восемьдесят пять': '85', 'восемьдесят шесть': '86', 'восемьдесят семь': '87', 'восемьдесят восемь': '88', 'восемьдесят девять': '89', 'девяносто': '90',
+    'девяносто один': '91', 'девяносто два': '92', 'девяносто три': '93', 'девяносто четыре': '94', 'девяносто пять': '95', 'девяносто шесть': '96', 'девяносто семь': '97', 'девяносто восемь': '98', 'девяносто девять': '99', 'сто': '100',
+    'запятая': '.', 'и половина': '.5', 'с половиной': '.5', 'половина': '.5'
+};
+
+const stopWordsByLang = {
+    'it': ['ferma', 'fermati'],
+    'en': ['halt'],
+    'fr': ['arrêter', 'arreter', 'arrête', 'arrete'],
+    'es': ['parar', 'para'],
+    'de': ['halt', 'stoppen', 'stopp'],
+    'ru': ['стоп', 'хватит']
 };
 
 function processVoiceInput(text) {
-    // Check for stop commands
-    if (lowerText.includes('stop') || lowerText.includes('ferma') || lowerText.includes('fermati')) {
+    let lowerText = text.toLowerCase().trim();
+
+    // Check for stop commands (Universal "stop" + localized words)
+    const isStopUniversal = lowerText.includes('stop');
+    const localizedStops = stopWordsByLang[state.lang] || [];
+    const isStopLocalized = localizedStops.some(word => lowerText.includes(word));
+
+    if (isStopUniversal || isStopLocalized) {
         stopVoiceRecording();
         return;
     }
@@ -615,6 +694,16 @@ if (elements.voiceToggle) {
 if (elements.btnStopRecordingModal) {
     elements.btnStopRecordingModal.addEventListener('click', () => {
         stopVoiceRecording();
+    });
+}
+
+if (elements.btnRestartRecordingModal) {
+    elements.btnRestartRecordingModal.addEventListener('click', () => {
+        try {
+            recognition.start();
+        } catch (e) {
+            console.error(e);
+        }
     });
 }
 

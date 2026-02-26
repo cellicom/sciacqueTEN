@@ -6,13 +6,13 @@ A modern, fast, and light web-based tool designed for teachers to convert studen
 
 - **Real-Time Calculation**: See results instantly as you type.
 - **Dynamic Repeater**: Add as many score fields as needed. Use the `Enter` key to quickly add a new row.
-- **Voice Commands**: Add scores hands-free by speaking numbers. Use "Stop" or "Ferma" to end recording.
+- **Voice Commands**: Add scores hands-free by speaking numbers. Use "Stop" or the localized command (e.g., "Ferma", "Arrêter", "Parar") to end recording.
 - **Grade Format Toggle**: Choose between "½" and ".5" for suggested grades with a smooth flip animation.
 - **Integrated Help Guide**: A quick-access modal with instructions on all application features.
 - **Interactive Surprise**: A fun confetti effect hidden in the interface.
 - **Smart Rounding**: Automatically suggests the school grade equivalent (e.g., 6, 6+, 6.5, 7-) based on standard increments.
 - **Visual Feedback**: Results are color-coded (Red for fail, Green for pass) for both decimal and suggested grades.
-- **Bilingual**: Supports English and Italian with automatic browser language detection.
+- **Multilingual**: Supports 🇮🇹 Italian, 🇺🇸 English, 🇫🇷 French, 🇪🇸 Spanish, 🇩🇪 German, and 🇷🇺 Russian.
 - **Premium UI**: Modern design with glassmorphism effects and Bootstrap 5.
 - **Dark/Light Mode**: Respects system theme by default, with a manual toggle and persistence.
 - **Data Persistence**: Automatically saves your current session (scores, theme, language) in the browser's local storage.
@@ -32,7 +32,7 @@ A modern, fast, and light web-based tool designed for teachers to convert studen
 2. Enter the **Maximum Score** possible for the test.
 3. Start entering student scores in the list.
 4. Press **Enter** to add a new score field quickly.
-5. Alternatively, click the **Microphone** icon to start voice recording and say your scores. Speak "Stop" or "Ferma" to finish.
+5. Alternatively, click the **Microphone** icon to start voice recording and say your scores. Speak "Stop" or the language-specific command (e.g., "Ferma", "Arrêter") to finish.
 6. Click the **Question Mark** icon for a quick feature guide.
 7. Review the **Total/Maximum** card and the results table for decimal and suggested grades.
 8. Use the **Restart** (Ricomincia) button to clear the scores while keeping the Maximum Score for the next batch.
