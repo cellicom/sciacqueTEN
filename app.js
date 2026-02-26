@@ -44,6 +44,10 @@ const elements = {
     gradeFlipCard: document.getElementById('gradeFlipCard'),
     resSuggestedBackVal: document.getElementById('resSuggestedBackVal'),
     heartSurprise: document.getElementById('heartEasterEgg'),
+    recordingModal: new bootstrap.Modal(document.getElementById('recordingModal')),
+    audioWaveCanvas: document.getElementById('audioWaveCanvas'),
+    rawVoiceDebug: document.getElementById('rawVoiceDebug'),
+    btnStopRecordingModal: document.getElementById('btnStopRecordingModal'),
     html: document.documentElement
 };
 
@@ -253,6 +257,10 @@ function updateTranslations() {
     document.getElementById('helpFeatureFormat').innerHTML = t.helpFeatureFormat;
     document.getElementById('helpFeatureSurprise').innerHTML = t.helpFeatureSurprise;
     document.getElementById('btnCloseModal').textContent = t.btnClose;
+    document.getElementById('lblRecordingTitle').textContent = t.lblRecordingTitle;
+    document.getElementById('lblVoiceStopInstruction').innerHTML = t.lblVoiceStopInstruction;
+    document.getElementById('lblRawVoiceTitle').textContent = t.lblRawVoiceTitle;
+    document.getElementById('lblStopRecordingBtn').textContent = t.lblStopRecordingBtn;
 
     elements.maxScore.placeholder = t.placeholderMax;
     elements.langSelect.value = state.lang;
@@ -342,19 +350,40 @@ if (elements.heartSurprise) {
     });
 }
 
-// Voice Recognition Setup
+// Voice Recognition & Audio Visualization Setup
 let recognition = null;
 let isRecording = false;
+let audioCtx, analyser, dataArray, animationId, mediaStream;
 
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true; // Enabled for debug text
+
+    recognition.onstart = () => {
+        isRecording = true;
+        elements.voiceToggle.classList.remove('btn-recording'); // remove spinner
+        elements.voiceToggle.classList.add('btn-danger'); // Add active color
+        elements.recordingModal.show();
+        elements.rawVoiceDebug.textContent = "...";
+        initAudioWave();
+    };
 
     recognition.onresult = (event) => {
-        const transcript = event.results[event.results.length - 1][0].transcript;
-        processVoiceInput(transcript);
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+                processVoiceInput(event.results[i][0].transcript);
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+        }
+
+        elements.rawVoiceDebug.innerHTML = `<strong>${finalTranscript}</strong> <span class="text-muted">${interimTranscript}</span>`;
     };
 
     recognition.onend = () => {
@@ -364,30 +393,99 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             } catch (e) {
                 console.error("Recognition already started or error restarting", e);
             }
+        } else {
+            stopAudioWave();
+            elements.recordingModal.hide();
+            elements.voiceToggle.classList.remove('btn-danger');
+            elements.voiceToggle.innerHTML = '<i class="bi bi-mic-fill"></i>';
         }
     };
 
     recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
-        if (event.error !== 'no-speech') {
-            stopVoiceRecording();
+        stopVoiceRecording();
+
+        const t = translations[state.lang];
+        if (event.error === 'not-allowed' || event.error === 'audio-capture') {
+            alert(t.msgMicError || "Microphone access denied.");
+        } else if (event.error !== 'no-speech') {
+            alert(t.msgSpeechError || "Speech recognition error.");
         }
     };
 } else {
     if (elements.voiceToggle) elements.voiceToggle.style.display = 'none';
 }
 
-function processVoiceInput(text) {
-    const lowerText = text.toLowerCase().trim();
+const wordToNumberMap = {
+    // Italian (0-100)
+    'zero': '0', 'uno': '1', 'un': '1', 'due': '2', 'tre': '3', 'quattro': '4',
+    'cinque': '5', 'sei': '6', 'sette': '7', 'otto': '8', 'nove': '9', 'dieci': '10',
+    'undici': '11', 'dodici': '12', 'tredici': '13', 'quattordici': '14', 'quindici': '15',
+    'sedici': '16', 'diciassette': '17', 'diciotto': '18', 'diciannove': '19', 'venti': '20',
+    'ventuno': '21', 'ventidue': '22', 'ventitre': '23', 'ventiquattro': '24', 'venticinque': '25',
+    'ventisei': '26', 'ventisette': '27', 'ventotto': '28', 'ventinove': '29', 'trenta': '30',
+    'trentuno': '31', 'trentadue': '32', 'trentatre': '33', 'trentaquattro': '34', 'trentacinque': '35',
+    'trentasei': '36', 'trentasette': '37', 'trentotto': '38', 'trentanove': '39', 'quaranta': '40',
+    'quarantuno': '41', 'quarantadue': '42', 'quarantatre': '43', 'quarantaquattro': '44', 'quarantacinque': '45',
+    'quarantasei': '46', 'quarantasette': '47', 'quarantotto': '48', 'quarantanove': '49', 'cinquanta': '50',
+    'cinquantuno': '51', 'cinquantadue': '52', 'cinquantatre': '53', 'cinquantaquattro': '54', 'cinquantacinque': '55',
+    'cinquantasei': '56', 'cinquantasette': '57', 'cinquantotto': '58', 'cinquantanove': '59', 'sessanta': '60',
+    'sessantuno': '61', 'sessantadue': '62', 'sessantatre': '63', 'sessantaquattro': '64', 'sessantacinque': '65',
+    'sessantasei': '66', 'sessantasette': '67', 'sessantotto': '68', 'sessantanove': '69', 'settanta': '70',
+    'settantuno': '71', 'settantadue': '72', 'settantatre': '73', 'settantaquattro': '74', 'settantacinque': '75',
+    'settantasei': '76', 'settantasette': '77', 'settantotto': '78', 'settantanove': '79', 'ottanta': '80',
+    'ottantuno': '81', 'ottantadue': '82', 'ottantatre': '83', 'ottantaquattro': '84', 'ottantacinque': '85',
+    'ottantasei': '86', 'ottantasette': '87', 'ottantotto': '88', 'ottantanove': '89', 'novanta': '90',
+    'novantuno': '91', 'novantadue': '92', 'novantatre': '93', 'novantaquattro': '94', 'novantacinque': '95',
+    'novantasei': '96', 'novantasette': '97', 'novantotto': '98', 'novantanove': '99', 'cento': '100',
+    'mezzo': '.5', 'virgola': '.', 'punto': '.', 'e mezzo': '.5',
 
+    // English (0-100)
+    'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5',
+    'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'ten': '10',
+    'eleven': '11', 'twelve': '12', 'thirteen': '13', 'fourteen': '14', 'fifteen': '15',
+    'sixteen': '16', 'seventeen': '17', 'eighteen': '18', 'nineteen': '19', 'twenty': '20',
+    'twenty-one': '21', 'twenty-two': '22', 'twenty-three': '23', 'twenty-four': '24', 'twenty-five': '25',
+    'twenty-six': '26', 'twenty-seven': '27', 'twenty-eight': '28', 'twenty-nine': '29', 'thirty': '30',
+    'thirty-one': '31', 'thirty-two': '32', 'thirty-three': '33', 'thirty-four': '34', 'thirty-five': '35',
+    'thirty-six': '36', 'thirty-seven': '37', 'thirty-eight': '38', 'thirty-nine': '39', 'forty': '40',
+    'forty-one': '41', 'forty-two': '42', 'forty-three': '43', 'forty-four': '44', 'forty-five': '45',
+    'forty-six': '46', 'forty-seven': '47', 'forty-eight': '48', 'forty-nine': '49', 'fifty': '50',
+    'fifty-one': '51', 'fifty-two': '52', 'fifty-three': '53', 'fifty-four': '54', 'fifty-five': '55',
+    'fifty-six': '56', 'fifty-seven': '57', 'fifty-eight': '58', 'fifty-nine': '59', 'sixty': '60',
+    'sixty-one': '61', 'sixty-two': '62', 'sixty-three': '63', 'sixty-four': '64', 'sixty-five': '65',
+    'sixty-six': '66', 'sixty-seven': '67', 'sixty-eight': '68', 'sixty-nine': '69', 'seventy': '70',
+    'seventy-one': '71', 'seventy-two': '72', 'seventy-three': '73', 'seventy-four': '74', 'seventy-five': '75',
+    'seventy-six': '76', 'seventy-seven': '77', 'seventy-eight': '78', 'seventy-nine': '79', 'eighty': '80',
+    'eighty-one': '81', 'eighty-two': '82', 'eighty-three': '83', 'eighty-four': '84', 'eighty-five': '85',
+    'eighty-six': '86', 'eighty-seven': '87', 'eighty-eight': '88', 'eighty-nine': '89', 'ninety': '90',
+    'ninety-one': '91', 'ninety-two': '92', 'ninety-three': '93', 'ninety-four': '94', 'ninety-five': '95',
+    'ninety-six': '96', 'ninety-seven': '97', 'ninety-eight': '98', 'ninety-nine': '99', 'one hundred': '100',
+    'half': '.5', 'point': '.', 'dot': '.', 'and a half': '.5'
+};
+
+function processVoiceInput(text) {
     // Check for stop commands
     if (lowerText.includes('stop') || lowerText.includes('ferma') || lowerText.includes('fermati')) {
         stopVoiceRecording();
         return;
     }
 
+    // Replace multi-word phrases first
+    lowerText = lowerText.replace(/\b(e mezzo|and a half)\b/g, '.5');
+
+    // Replace individual number words with digits
+    const words = Object.keys(wordToNumberMap).sort((a, b) => b.length - a.length);
+    words.forEach(word => {
+        const regex = new RegExp(`\\b${word}\\b`, 'g');
+        lowerText = lowerText.replace(regex, wordToNumberMap[word]);
+    });
+
+    // Cleanup spaces around dots or commas (e.g. "6 . 5" -> "6.5")
+    lowerText = lowerText.replace(/\s*([.,])\s*/g, '$1');
+
     // Match numbers (including decimals with , or .)
-    const numbers = text.match(/\d+([.,]\d+)?/g);
+    const numbers = lowerText.match(/\d+([.,]\d+)?/g);
     if (numbers) {
         numbers.forEach(numStr => {
             const num = parseFloat(numStr.replace(',', '.'));
@@ -408,43 +506,115 @@ function processVoiceInput(text) {
 }
 
 function startVoiceRecording() {
-    if (!recognition) return;
-    isRecording = true;
+    if (!recognition) {
+        alert(translations[state.lang].msgSpeechError || "Feature not supported");
+        return;
+    }
+
+    // Set loading state
+    elements.voiceToggle.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
     recognition.lang = state.lang === 'it' ? 'it-IT' : 'en-US';
     try {
         recognition.start();
     } catch (e) {
-        console.error("Recognition already started", e);
-    }
-    if (elements.voiceToggle) {
-        elements.voiceToggle.classList.add('btn-recording');
-        elements.voiceToggle.title = translations[state.lang].voiceStop;
-        elements.voiceToggle.innerHTML = '<i class="bi bi-mic-mute-fill"></i>';
+        console.error("Recognition start failed", e);
+        elements.voiceToggle.innerHTML = '<i class="bi bi-mic-fill"></i>';
     }
 }
 
 function stopVoiceRecording() {
-    if (!recognition) return;
-    isRecording = false;
-    try {
-        recognition.stop();
-    } catch (e) {
-        console.error("Recognition already stopped", e);
+    isRecording = false; // Flag to stop auto-restart in onend
+    if (recognition) {
+        try { recognition.stop(); } catch (e) { }
     }
+    stopAudioWave();
+    elements.recordingModal.hide();
     if (elements.voiceToggle) {
-        elements.voiceToggle.classList.remove('btn-recording');
-        elements.voiceToggle.title = translations[state.lang].voiceStart;
+        elements.voiceToggle.classList.remove('btn-danger', 'btn-recording');
         elements.voiceToggle.innerHTML = '<i class="bi bi-mic-fill"></i>';
+    }
+}
+
+function initAudioWave() {
+    const canvas = elements.audioWaveCanvas;
+    const canvasCtx = canvas.getContext("2d");
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function (stream) {
+                mediaStream = stream;
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                const source = audioCtx.createMediaStreamSource(stream);
+                source.connect(analyser);
+
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+
+                function draw() {
+                    animationId = requestAnimationFrame(draw);
+                    analyser.getByteTimeDomainData(dataArray);
+
+                    canvasCtx.fillStyle = "rgba(0, 0, 0, 0.1)"; // Match style.css background slightly
+                    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    canvasCtx.lineWidth = 2;
+                    canvasCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+                    canvasCtx.beginPath();
+
+                    let sliceWidth = canvas.width * 1.0 / bufferLength;
+                    let x = 0;
+
+                    for (let i = 0; i < bufferLength; i++) {
+                        let v = dataArray[i] / 128.0;
+                        let y = v * canvas.height / 2;
+
+                        if (i === 0) {
+                            canvasCtx.moveTo(x, y);
+                        } else {
+                            canvasCtx.lineTo(x, y);
+                        }
+
+                        x += sliceWidth;
+                    }
+
+                    canvasCtx.lineTo(canvas.width, canvas.height / 2);
+                    canvasCtx.stroke();
+                }
+
+                draw();
+            })
+            .catch(function (err) {
+                console.error("Audio wave initialization failed: " + err);
+                canvasCtx.fillStyle = "#ff6b6b";
+                canvasCtx.fillText("Visualizer error", canvas.width / 2 - 40, canvas.height / 2);
+            });
+    }
+}
+
+function stopAudioWave() {
+    if (animationId) cancelAnimationFrame(animationId);
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+    }
+    if (audioCtx && audioCtx.state !== 'closed') {
+        audioCtx.close();
     }
 }
 
 if (elements.voiceToggle) {
     elements.voiceToggle.addEventListener('click', () => {
-        if (isRecording) {
-            stopVoiceRecording();
-        } else {
+        if (!isRecording) {
             startVoiceRecording();
         }
+    });
+}
+
+if (elements.btnStopRecordingModal) {
+    elements.btnStopRecordingModal.addEventListener('click', () => {
+        stopVoiceRecording();
     });
 }
 

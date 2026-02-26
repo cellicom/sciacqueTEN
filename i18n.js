@@ -21,8 +21,14 @@ window.translations = {
         helpFeatureVoice: "<strong>Comandi Vocali:</strong> Clicca sul microfono per iniziare. Pronuncia i numeri per aggiungerli alla lista.",
         helpFeatureVoiceStop: "<strong>Fermati:</strong> Pronuncia 'Stop' o 'Ferma' per terminare la registrazione vocale.",
         helpFeatureFormat: "<strong>Formato Voti:</strong> Usa lo switch in alto a destra nei risultati per scegliere tra il formato '½' e '.5'.",
-        helpFeatureSurprise: "<strong>Sorpresa:</strong> Prova a cercare un piccolo segreto...",
-        btnClose: "Chiudi"
+        helpFeatureSurprise: "<strong>Sorpresa:</strong> Prova a cercare un piccolo segreto nel footer della pagina...",
+        btnClose: "Chiudi",
+        lblRecordingTitle: "Registrazione in corso...",
+        lblVoiceStopInstruction: "Pronuncia <strong>'Stop'</strong> o <strong>'Ferma'</strong> per terminare.",
+        lblRawVoiceTitle: "Testo riconosciuto (debug):",
+        lblStopRecordingBtn: "Termina",
+        msgMicError: "Accesso al microfono negato o non disponibile. Controlla i permessi del browser.",
+        msgSpeechError: "Il riconoscimento vocale non è supportato in questo browser o si è verificato un errore."
     },
     en: {
         lblMaxScore: "Maximum Score",
@@ -46,8 +52,14 @@ window.translations = {
         helpFeatureVoice: "<strong>Voice Commands:</strong> Click the microphone to start. Speak numbers to add them to the list.",
         helpFeatureVoiceStop: "<strong>Stop Recording:</strong> Say 'Stop' or 'Halt' to end voice recording.",
         helpFeatureFormat: "<strong>Grade Format:</strong> Use the switch in the top right of the results to choose between '½' and '.5' formats.",
-        helpFeatureSurprise: "<strong>Surprise:</strong> Try to find a little secret...",
-        btnClose: "Close"
+        helpFeatureSurprise: "<strong>Surprise:</strong> Try to find a little secret in the page footer...",
+        btnClose: "Close",
+        lblRecordingTitle: "Recording in progress...",
+        lblVoiceStopInstruction: "Say <strong>'Stop'</strong> or <strong>'Halt'</strong> to end.",
+        lblRawVoiceTitle: "Recognized text (debug):",
+        lblStopRecordingBtn: "Stop",
+        msgMicError: "Microphone access denied or unavailable. Check your browser permissions.",
+        msgSpeechError: "Speech recognition is not supported in this browser or an error occurred."
     }
 };
 
