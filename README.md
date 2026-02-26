@@ -9,6 +9,7 @@ A modern, fast, and light web-based tool designed for teachers to convert studen
 - **Voice Commands**: Add scores hands-free by speaking numbers. Use "Stop" or "Ferma" to end recording.
 - **Grade Format Toggle**: Choose between "½" and ".5" for suggested grades with a smooth flip animation.
 - **Integrated Help Guide**: A quick-access modal with instructions on all application features.
+- **Interactive Surprise**: A fun confetti effect hidden in the interface.
 - **Smart Rounding**: Automatically suggests the school grade equivalent (e.g., 6, 6+, 6.5, 7-) based on standard increments.
 - **Visual Feedback**: Results are color-coded (Red for fail, Green for pass) for both decimal and suggested grades.
 - **Bilingual**: Supports English and Italian with automatic browser language detection.

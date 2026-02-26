@@ -46,7 +46,7 @@
 <body>
     <main class="container mt-3">
         <header class="row align-items-center mb-4">
-            <div class="col-md-3 d-none d-md-block"></div> <!-- Spacer for balance -->
+            <div class="col-md-3 d-none d-md-block"></div>
 
             <div class="col-md-6 text-center">
                 <h1 class="fw-bold title-font text-primary mb-0 sciacqueten-title">
@@ -107,7 +107,7 @@
                                 </div>
                             </h5>
                             <div id="scoresContainer">
-                                <!-- Voti rows will be injected here -->
+                                <!-- Score rows will be injected here -->
                             </div>
                         </div>
                     </div>
@@ -181,7 +181,8 @@
 
     <footer class="footer mt-auto">
         <div class="container">
-            <p class="mb-1">Made with <span class="text-danger">&hearts;</span> by <a href="https://github.com/cellicom"
+            <p class="mb-1">Made with <span class="text-danger" id="heartEasterEgg"
+                    style="cursor: pointer;">&hearts;</span> by <a href="https://github.com/cellicom"
                     target="_blank">cellicom</a></p>
             <a href="https://github.com/cellicom/sciacqueTEN" target="_blank" class="text-muted small">
                 <i class="bi bi-github me-1"></i>View Repository on Github
@@ -212,9 +213,13 @@
                             <i class="bi bi-stop-circle text-primary me-3 fs-5"></i>
                             <span id="helpFeatureVoiceStop"></span>
                         </li>
-                        <li class="d-flex align-items-start">
+                        <li class="mb-3 d-flex align-items-start">
                             <i class="bi bi-arrow-left-right text-primary me-3 fs-5"></i>
                             <span id="helpFeatureFormat"></span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-heart-fill text-danger me-3 fs-5"></i>
+                            <span id="helpFeatureSurprise"></span>
                         </li>
                     </ul>
                 </div>
@@ -228,6 +233,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <!-- i18n dictionary -->
     <script src="i18n.js"></script>
     <!-- App Logic -->

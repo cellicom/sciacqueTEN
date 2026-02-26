@@ -43,6 +43,7 @@ const elements = {
     formatSwitch: document.getElementById('formatSwitch'),
     gradeFlipCard: document.getElementById('gradeFlipCard'),
     resSuggestedBackVal: document.getElementById('resSuggestedBackVal'),
+    heartSurprise: document.getElementById('heartEasterEgg'),
     html: document.documentElement
 };
 
@@ -250,6 +251,7 @@ function updateTranslations() {
     document.getElementById('helpFeatureVoice').innerHTML = t.helpFeatureVoice;
     document.getElementById('helpFeatureVoiceStop').innerHTML = t.helpFeatureVoiceStop;
     document.getElementById('helpFeatureFormat').innerHTML = t.helpFeatureFormat;
+    document.getElementById('helpFeatureSurprise').innerHTML = t.helpFeatureSurprise;
     document.getElementById('btnCloseModal').textContent = t.btnClose;
 
     elements.maxScore.placeholder = t.placeholderMax;
@@ -327,6 +329,18 @@ elements.formatSwitch.addEventListener('click', (e) => {
     applyFormatMode();
     saveState();
 });
+
+// Surprise Feature
+if (elements.heartSurprise) {
+    elements.heartSurprise.addEventListener('click', () => {
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#6366f1', '#34d399', '#f87171', '#fbbf24']
+        });
+    });
+}
 
 // Voice Recognition Setup
 let recognition = null;
