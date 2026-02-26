@@ -1,5 +1,5 @@
 {
-    "name": "SciacqueTEN - Grade Converter",
+    "name": "SciacqueTEN - Exam Scores Converter",
     "short_name": "SciacqueTEN",
     "description": "Convert student exam scores into a base-10 scale instantly.",
     "start_url": "./index.html",
