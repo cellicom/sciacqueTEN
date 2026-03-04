@@ -22,7 +22,14 @@ let state = {
     lang: 'it',
     theme: 'light',
     formatMode: 'half', // 'half' or 'decimal'
-    micId: 'default'
+    micId: 'default',
+    speak: {
+        summary: true,
+        decimal: false,
+        suggested: false,
+        floor: false,
+        ceil: false
+    }
 };
 
 // DOM Elements
@@ -52,6 +59,7 @@ const elements = {
     rawVoiceDebug: document.getElementById('rawVoiceDebug'),
     btnStopRecordingModal: document.getElementById('btnStopRecordingModal'),
     btnRestartRecordingModal: document.getElementById('btnRestartRecordingModal'), // New button
+    btnPlayResults: document.getElementById('btnPlayResults'),
     html: document.documentElement
 };
 
@@ -65,6 +73,7 @@ function init() {
     updateTranslations();
     applyTheme();
     applyFormatMode();
+    applySpeakSettings();
     calculate();
 }
 
@@ -138,6 +147,8 @@ function calculate() {
     // Update Summary Card
     elements.resSummary.textContent = `${sum} / ${max > 0 ? max : '-'}`;
 
+    updatePlayButtonVisibility();
+
     if (max > 0) {
         let result = (sum / max) * 10;
         result = Math.min(10, Math.max(0, result)); // Clamp 0-10
@@ -149,9 +160,25 @@ function calculate() {
         const suggested = getSuggestedGrade(result);
         elements.resSuggested.textContent = suggested;
 
-        // Populate back card with decimal format (.5)
         const suggestedDecimal = getSuggestedGrade(result, true);
         elements.resSuggestedBackVal.textContent = suggestedDecimal;
+
+        let spokenSuggested = state.formatMode === 'decimal' ? suggestedDecimal : suggested;
+        if (spokenSuggested === '½') {
+            spokenSuggested = translations[state.lang].lblSpeakHalfStandalone || "half";
+        } else if (spokenSuggested.includes('½')) {
+            const halfStr = translations[state.lang].lblSpeakHalf || " and a half";
+            spokenSuggested = spokenSuggested.replace(' ½', halfStr).replace('½', halfStr);
+        }
+
+        // Prepare spoken values for potential speech synthesis
+        state.currentResults = {
+            summary: `${sum} su ${max}`,
+            decimal: result.toFixed(2).replace('.', ','), /* Italian TTS reads commas better for decimals sometimes, but dot is okay. Let's keep dot unless lang is IT. Actually let's just use dot and let uttrLang handle it, or replace dot with comma for certain langs. But we only need to set suggested for now. */
+            floor: Math.floor(result).toString(),
+            ceil: Math.ceil(result).toString(),
+            suggested: spokenSuggested
+        };
 
         // Color coding logic
         const decimalPass = result >= 6;
@@ -208,11 +235,11 @@ function getSuggestedGrade(val, forceDecimal = false) {
     const grade = schoolGrades.find(g => Math.abs(g.value - rounded) < 0.001);
 
     if (grade) {
-        if (forceDecimal && grade.label.includes('½')) {
-            return grade.label.replace('½', '.5').trim();
-        }
         if (forceDecimal && grade.label === '½') {
             return '0.5';
+        }
+        if (forceDecimal && grade.label.includes('½')) {
+            return grade.label.replace(' ½', '.5').trim();
         }
         return grade.label;
     }
@@ -292,6 +319,14 @@ function updateTranslations() {
         document.getElementById('lblTheme').textContent = t.lblTheme;
         document.getElementById('lblLanguage').textContent = t.lblLanguage;
         document.getElementById('lblDefaultMic').textContent = t.lblDefaultMic;
+
+        // Speak settings translations
+        document.getElementById('lblReadResults').textContent = t.lblReadResults || 'Leggi risultato dopo registrazione';
+        document.getElementById('lblSpeakSummary').textContent = t.lblSpeakSummary || 'Punteggio Totale';
+        document.getElementById('lblSpeakDecimal').textContent = t.lblSpeakDecimal || 'Decimale';
+        document.getElementById('lblSpeakSuggested').textContent = t.lblSpeakSuggested || 'Suggerito';
+        document.getElementById('lblSpeakFloor').textContent = t.lblSpeakFloor || 'Difetto';
+        document.getElementById('lblSpeakCeil').textContent = t.lblSpeakCeil || 'Eccesso';
     }
 
     // Modal translations
@@ -367,6 +402,40 @@ elements.micSelect.addEventListener('change', (e) => {
     saveState();
 });
 
+function applySpeakSettings() {
+    document.querySelectorAll('.speak-setting').forEach(input => {
+        const key = input.dataset.setting;
+        input.checked = state.speak[key];
+    });
+    updatePlayButtonVisibility();
+}
+
+document.querySelectorAll('.speak-setting').forEach(input => {
+    input.addEventListener('change', (e) => {
+        const key = e.target.dataset.setting;
+        state.speak[key] = e.target.checked;
+        saveState();
+        updatePlayButtonVisibility();
+    });
+});
+
+function updatePlayButtonVisibility() {
+    const anySpeakChecked = Object.values(state.speak).some(v => v);
+    const hasResults = parseFloat(state.maxScore) > 0;
+
+    if (elements.btnPlayResults) {
+        if (anySpeakChecked && hasResults) {
+            elements.btnPlayResults.classList.remove('d-none');
+        } else {
+            elements.btnPlayResults.classList.add('d-none');
+        }
+    }
+}
+
+if (elements.btnPlayResults) {
+    elements.btnPlayResults.addEventListener('click', speakResults);
+}
+
 if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
     navigator.mediaDevices.addEventListener('devicechange', populateMicSelect);
 }
@@ -392,6 +461,7 @@ elements.formatSwitch.addEventListener('click', (e) => {
         state.formatMode = state.formatMode === 'half' ? 'decimal' : 'half';
     }
     applyFormatMode();
+    calculate();
     saveState();
 });
 
@@ -665,6 +735,55 @@ function stopVoiceRecording() {
     if (elements.voiceToggle) {
         elements.voiceToggle.classList.remove('btn-danger', 'btn-recording');
         elements.voiceToggle.innerHTML = '<i class="bi bi-mic-fill"></i>';
+    }
+
+    // Speak results logic
+    const anySpeakChecked = Object.values(state.speak).some(v => v);
+    if (anySpeakChecked && state.currentResults) {
+        setTimeout(speakResults, 1000);
+    }
+}
+
+function speakResults() {
+    if (!('speechSynthesis' in window)) return;
+
+    // Attempt to match the synthesis voice to the selected language
+    let uttrLang = state.lang === 'en' ? 'en-US' : `${state.lang}-${state.lang.toUpperCase()}`;
+    if (state.lang === 'it') uttrLang = 'it-IT';
+
+    const t = translations[state.lang];
+    let phrasesToSpeak = [];
+
+    // Fallbacks if translations are missing yet
+    const labels = {
+        summary: t.lblSpeakSummary || 'Punteggio Totale',
+        decimal: t.lblSpeakDecimal || 'Decimale',
+        suggested: t.lblSpeakSuggested || 'Suggerito',
+        floor: t.lblSpeakFloor || 'Difetto',
+        ceil: t.lblSpeakCeil || 'Eccesso'
+    };
+
+    if (state.speak.summary) {
+        phrasesToSpeak.push(`${labels.summary}: ${state.currentResults.summary}`);
+    }
+    if (state.speak.decimal) {
+        phrasesToSpeak.push(`${labels.decimal}: ${state.currentResults.decimal}`);
+    }
+    if (state.speak.suggested) {
+        phrasesToSpeak.push(`${labels.suggested}: ${state.currentResults.suggested}`);
+    }
+    if (state.speak.floor) {
+        phrasesToSpeak.push(`${labels.floor}: ${state.currentResults.floor}`);
+    }
+    if (state.speak.ceil) {
+        phrasesToSpeak.push(`${labels.ceil}: ${state.currentResults.ceil}`);
+    }
+
+    if (phrasesToSpeak.length > 0) {
+        const textToSpeak = phrasesToSpeak.join(". ");
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = uttrLang;
+        window.speechSynthesis.speak(utterance);
     }
 }
 

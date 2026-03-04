@@ -35,7 +35,15 @@ window.translations = {
         lblMicrophone: "Microfono",
         lblTheme: "Tema",
         lblLanguage: "Lingua",
-        lblDefaultMic: "Predefinito"
+        lblDefaultMic: "Predefinito",
+        lblReadResults: "Leggi risultato dopo registrazione",
+        lblSpeakSummary: "Punteggio Totale",
+        lblSpeakDecimal: "Decimale",
+        lblSpeakSuggested: "Suggerito",
+        lblSpeakFloor: "Difetto",
+        lblSpeakCeil: "Eccesso",
+        lblSpeakHalf: " e mezzo",
+        lblSpeakHalfStandalone: "mezzo"
     },
     en: {
         lblMaxScore: "Maximum Score",
@@ -73,7 +81,15 @@ window.translations = {
         lblMicrophone: "Microphone",
         lblTheme: "Theme",
         lblLanguage: "Language",
-        lblDefaultMic: "Default"
+        lblDefaultMic: "Default",
+        lblReadResults: "Read result after recording",
+        lblSpeakSummary: "Total Score",
+        lblSpeakDecimal: "Decimal",
+        lblSpeakSuggested: "Suggested",
+        lblSpeakFloor: "Floor",
+        lblSpeakCeil: "Ceiling",
+        lblSpeakHalf: " and a half",
+        lblSpeakHalfStandalone: "half"
     },
     fr: {
         lblMaxScore: "Score Maximum",
@@ -111,7 +127,15 @@ window.translations = {
         lblMicrophone: "Microphone",
         lblTheme: "Thème",
         lblLanguage: "Langue",
-        lblDefaultMic: "Défaut"
+        lblDefaultMic: "Défaut",
+        lblReadResults: "Lire le résultat après l'enregistrement",
+        lblSpeakSummary: "Score Total",
+        lblSpeakDecimal: "Décimal",
+        lblSpeakSuggested: "Suggéré",
+        lblSpeakFloor: "Arrondi inférieur",
+        lblSpeakCeil: "Arrondi supérieur",
+        lblSpeakHalf: " et demi",
+        lblSpeakHalfStandalone: "demi"
     },
     es: {
         lblMaxScore: "Puntuación Máxima",
@@ -149,7 +173,15 @@ window.translations = {
         lblMicrophone: "Micrófono",
         lblTheme: "Tema",
         lblLanguage: "Idioma",
-        lblDefaultMic: "Predeterminado"
+        lblDefaultMic: "Predeterminado",
+        lblReadResults: "Leer el resultado después de grabar",
+        lblSpeakSummary: "Puntuación Total",
+        lblSpeakDecimal: "Decimal",
+        lblSpeakSuggested: "Sugerido",
+        lblSpeakFloor: "Redondeo a la baja",
+        lblSpeakCeil: "Redondeo al alza",
+        lblSpeakHalf: " y medio",
+        lblSpeakHalfStandalone: "medio"
     },
     de: {
         lblMaxScore: "Maximale Punktzahl",
@@ -187,7 +219,15 @@ window.translations = {
         lblMicrophone: "Mikrofon",
         lblTheme: "Thema",
         lblLanguage: "Sprache",
-        lblDefaultMic: "Standard"
+        lblDefaultMic: "Standard",
+        lblReadResults: "Ergebnis nach der Aufnahme vorlesen",
+        lblSpeakSummary: "Gesamtpunktzahl",
+        lblSpeakDecimal: "Dezimal",
+        lblSpeakSuggested: "Vorgeschlagen",
+        lblSpeakFloor: "Abgerundet",
+        lblSpeakCeil: "Aufgerundet",
+        lblSpeakHalf: " und ein halb",
+        lblSpeakHalfStandalone: "einhalb"
     },
     ru: {
         lblMaxScore: "Максим. балл",
@@ -225,7 +265,15 @@ window.translations = {
         lblMicrophone: "Микрофон",
         lblTheme: "Тема",
         lblLanguage: "Язык",
-        lblDefaultMic: "По умолчанию"
+        lblDefaultMic: "По умолчанию",
+        lblReadResults: "Прочитать результат после записи",
+        lblSpeakSummary: "Общий балл",
+        lblSpeakDecimal: "Десятичный",
+        lblSpeakSuggested: "Рекомендуемый",
+        lblSpeakFloor: "Округление вниз",
+        lblSpeakCeil: "Округление вверх",
+        lblSpeakHalf: " с половиной",
+        lblSpeakHalfStandalone: "половина"
     }
 };
 

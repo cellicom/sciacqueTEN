@@ -112,7 +112,14 @@
                     <div class="col-md-6">
                         <div class="glass-card shadow-sm h-100">
                             <div class="result-header mb-4">
-                                <h5 class="mb-0" id="lblResults">Risultati</h5>
+                                <div class="d-flex align-items-center gap-2">
+                                    <h5 class="mb-0" id="lblResults">Risultati</h5>
+                                    <button id="btnPlayResults"
+                                        class="btn btn-sm btn-link p-0 d-none text-decoration-none"
+                                        title="Riproduci Risultati">
+                                        <i class="bi bi-play-circle-fill fs-5 text-primary"></i>
+                                    </button>
+                                </div>
                                 <div class="format-switch" id="formatSwitch">
                                     <div class="format-switch-slider"></div>
                                     <div class="format-switch-option active" data-mode="half">½</div>
@@ -196,36 +203,88 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-4">
-                        <label for="micSelect" class="form-label text-muted small fw-bold text-uppercase d-block"
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 border-0 shadow-sm h-100"
+                                style="background-color: var(--card-bg, #fff);">
+                                <label for="langSelect" class="form-label text-muted small fw-bold text-uppercase mb-0"
+                                    id="lblLanguage">Lingua</label>
+                                <select id="langSelect" class="form-select border-0 shadow-sm lang-select w-50"
+                                    style="background-color: var(--card-bg, #fff);">
+                                    <!-- Dynamically populated -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 border-0 shadow-sm h-100"
+                                style="background-color: var(--card-bg, #fff);">
+                                <label class="form-label text-muted small fw-bold text-uppercase mb-0"
+                                    id="lblTheme">Tema</label>
+                                <div id="themeToggleOptions" class="ios-toggle theme-toggle" title="Toggle Theme">
+                                    <div class="ios-toggle-icons">
+                                        <i class="bi bi-sun-fill" id="sunIcon"></i>
+                                        <i class="bi bi-moon-fill" id="moonIcon"></i>
+                                    </div>
+                                    <div class="ios-toggle-knob"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 d-flex justify-content-between align-items-center p-3 rounded-3 border-0 shadow-sm"
+                        style="background-color: var(--card-bg, #fff);">
+                        <label for="micSelect" class="form-label text-muted small fw-bold text-uppercase mb-0"
                             id="lblMicrophone">Microfono</label>
-                        <select id="micSelect" class="form-select border-0 shadow-sm"
+                        <select id="micSelect" class="form-select border-0 shadow-sm w-50"
                             style="background-color: var(--card-bg, #fff);">
                             <option value="default" id="lblDefaultMic">Predefinito</option>
                         </select>
                     </div>
 
-                    <div class="mb-4 d-flex justify-content-between align-items-center p-3 rounded-3 border-0 shadow-sm"
-                        style="background-color: var(--card-bg, #fff);">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-0"
-                            id="lblTheme">Tema</label>
-                        <div id="themeToggleOptions" class="ios-toggle theme-toggle" title="Toggle Theme">
-                            <div class="ios-toggle-icons">
-                                <i class="bi bi-sun-fill" id="sunIcon"></i>
-                                <i class="bi bi-moon-fill" id="moonIcon"></i>
-                            </div>
-                            <div class="ios-toggle-knob"></div>
-                        </div>
-                    </div>
+                    <div class="mb-2 p-3 rounded-3 border-0 shadow-sm" style="background-color: var(--card-bg, #fff);">
+                        <label class="form-label text-muted small fw-bold text-uppercase d-block mb-3"
+                            id="lblReadResults">Leggi risultato dopo registrazione</label>
 
-                    <div class="mb-2 d-flex justify-content-between align-items-center p-3 rounded-3 border-0 shadow-sm"
-                        style="background-color: var(--card-bg, #fff);">
-                        <label for="langSelect" class="form-label text-muted small fw-bold text-uppercase mb-0"
-                            id="lblLanguage">Lingua</label>
-                        <select id="langSelect" class="form-select border-0 shadow-sm lang-select w-50"
-                            style="background-color: var(--card-bg, #fff);">
-                            <!-- Dynamically populated -->
-                        </select>
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <div class="form-check form-switch mb-2 mb-md-0">
+                                    <input class="form-check-input speak-setting" type="checkbox" role="switch"
+                                        id="speakSummary" data-setting="summary">
+                                    <label class="form-check-label" for="speakSummary" id="lblSpeakSummary">Punteggio
+                                        Totale</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-check form-switch mb-2 mb-md-0">
+                                    <input class="form-check-input speak-setting" type="checkbox" role="switch"
+                                        id="speakDecimal" data-setting="decimal">
+                                    <label class="form-check-label" for="speakDecimal"
+                                        id="lblSpeakDecimal">Decimale</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-check form-switch mb-2 mb-md-0">
+                                    <input class="form-check-input speak-setting" type="checkbox" role="switch"
+                                        id="speakSuggested" data-setting="suggested">
+                                    <label class="form-check-label" for="speakSuggested"
+                                        id="lblSpeakSuggested">Suggerito</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-check form-switch mb-2 mb-md-0">
+                                    <input class="form-check-input speak-setting" type="checkbox" role="switch"
+                                        id="speakFloor" data-setting="floor">
+                                    <label class="form-check-label" for="speakFloor" id="lblSpeakFloor">Difetto</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input speak-setting" type="checkbox" role="switch"
+                                        id="speakCeil" data-setting="ceil">
+                                    <label class="form-check-label" for="speakCeil" id="lblSpeakCeil">Eccesso</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
