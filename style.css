@@ -279,7 +279,7 @@ select.lang-select option {
 }
 
 .theme-toggle i {
-    color: #ffffff !important;
+    color: #ffffff;
     transition: var(--transition);
 }
 
@@ -415,6 +415,89 @@ select.lang-select option {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* Modal Specific Styles */
+.modal-header .btn-close {
+    background-color: transparent;
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+/* iOS Style Toggle */
+.ios-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60px;
+    height: 32px;
+    background-color: var(--bg-light);
+    /* Lavagna verde */
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    padding: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ios-toggle-icons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 7px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.ios-toggle-icons i {
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.ios-toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+/* Light Mode active state for icons */
+.ios-toggle-icons #sunIcon {
+    color: #000000;
+}
+
+.ios-toggle-icons #moonIcon {
+    color: #ffffff;
+}
+
+/* Dark mode active state for toggle */
+[data-theme="dark"] .ios-toggle {
+    background-color: var(--bg-dark);
+    /* Lavagna scuro */
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .ios-toggle-knob {
+    transform: translateX(28px);
+}
+
+[data-theme="dark"] .ios-toggle-icons #sunIcon {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .ios-toggle-icons #moonIcon {
+    color: #000000;
 }
 
 /* Voice Recording Modal Styles */

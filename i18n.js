@@ -30,7 +30,12 @@ window.translations = {
         lblRestartRecordingBtn: "Riavvia in ascolto",
         lblVoicePaused: "In pausa. Premi riavvia per continuare.",
         msgMicError: "Accesso al microfono negato o non disponibile. Controlla i permessi del browser.",
-        msgSpeechError: "Il riconoscimento vocale non è supportato in questo browser o si è verificato un errore."
+        msgSpeechError: "Il riconoscimento vocale non è supportato in questo browser o si è verificato un errore.",
+        lblSettingsTitle: "Impostazioni",
+        lblMicrophone: "Microfono",
+        lblTheme: "Tema",
+        lblLanguage: "Lingua",
+        lblDefaultMic: "Predefinito"
     },
     en: {
         lblMaxScore: "Maximum Score",
@@ -63,7 +68,12 @@ window.translations = {
         lblRestartRecordingBtn: "Restart listening",
         lblVoicePaused: "Paused. Press restart to continue.",
         msgMicError: "Microphone access denied or unavailable. Check your browser permissions.",
-        msgSpeechError: "Speech recognition is not supported in this browser or an error occurred."
+        msgSpeechError: "Speech recognition is not supported in this browser or an error occurred.",
+        lblSettingsTitle: "Settings",
+        lblMicrophone: "Microphone",
+        lblTheme: "Theme",
+        lblLanguage: "Language",
+        lblDefaultMic: "Default"
     },
     fr: {
         lblMaxScore: "Score Maximum",
@@ -96,7 +106,12 @@ window.translations = {
         lblRestartRecordingBtn: "Reprendre l'écoute",
         lblVoicePaused: "En pause. Appuyez sur reprendre pour continuer.",
         msgMicError: "Accès au microphone refusé ou indisponible. Vérifiez les autorisations de votre navigateur.",
-        msgSpeechError: "La reconnaissance vocale n'est pas prise en charge par ce navigateur ou une erreur s'est produite."
+        msgSpeechError: "La reconnaissance vocale n'est pas prise en charge par ce navigateur ou une erreur s'est produite.",
+        lblSettingsTitle: "Paramètres",
+        lblMicrophone: "Microphone",
+        lblTheme: "Thème",
+        lblLanguage: "Langue",
+        lblDefaultMic: "Défaut"
     },
     es: {
         lblMaxScore: "Puntuación Máxima",
@@ -129,7 +144,12 @@ window.translations = {
         lblRestartRecordingBtn: "Reiniciar escucha",
         lblVoicePaused: "En pausa. Presiona reiniciar para continuar.",
         msgMicError: "Acceso al micrófono denegado o no disponible. Comprueba los permisos de tu navegador.",
-        msgSpeechError: "La detección de voz no es compatible con este navegador o se ha producido un error."
+        msgSpeechError: "La detección de voz no es compatible con este navegador o se ha producido un error.",
+        lblSettingsTitle: "Ajustes",
+        lblMicrophone: "Micrófono",
+        lblTheme: "Tema",
+        lblLanguage: "Idioma",
+        lblDefaultMic: "Predeterminado"
     },
     de: {
         lblMaxScore: "Maximale Punktzahl",
@@ -162,7 +182,12 @@ window.translations = {
         lblRestartRecordingBtn: "Zuhören neu starten",
         lblVoicePaused: "Pausiert. Drücken Sie Neustart, um fortzufahren.",
         msgMicError: "Mikrofonzugriff verweigert oder nicht verfügbar. Überprüfen Sie Ihre Browsereinstellungen.",
-        msgSpeechError: "Die Spracherkennung wird in diesem Browser nicht unterstützt oder ein Fehler ist aufgetreten."
+        msgSpeechError: "Die Spracherkennung wird in diesem Browser nicht unterstützt oder ein Fehler ist aufgetreten.",
+        lblSettingsTitle: "Einstellungen",
+        lblMicrophone: "Mikrofon",
+        lblTheme: "Thema",
+        lblLanguage: "Sprache",
+        lblDefaultMic: "Standard"
     },
     ru: {
         lblMaxScore: "Максим. балл",
@@ -195,15 +220,20 @@ window.translations = {
         lblRestartRecordingBtn: "Возобновить прослушивание",
         lblVoicePaused: "Пауза. Нажмите 'Возобновить', чтобы продолжить.",
         msgMicError: "Доступ к микрофону запрещен или недоступен. Проверьте настройки вашего браузера.",
-        msgSpeechError: "Распознавание речи не поддерживается в этом браузере или произошла ошибка."
+        msgSpeechError: "Распознавание речи не поддерживается в этом браузере или произошла ошибка.",
+        lblSettingsTitle: "Настройки",
+        lblMicrophone: "Микрофон",
+        lblTheme: "Тема",
+        lblLanguage: "Язык",
+        lblDefaultMic: "По умолчанию"
     }
 };
 
 window.availableLanguages = [
-    { code: 'it', label: '🇮🇹 IT' },
-    { code: 'en', label: '🇺🇸 EN' },
-    { code: 'fr', label: '🇫🇷 FR' },
-    { code: 'es', label: '🇪🇸 ES' },
-    { code: 'de', label: '🇩🇪 DE' },
-    { code: 'ru', label: '🇷🇺 RU' }
+    { code: 'it', label: '🇮🇹', name: 'Italiano' },
+    { code: 'en', label: '🇺🇸', name: 'English' },
+    { code: 'fr', label: '🇫🇷', name: 'Français' },
+    { code: 'es', label: '🇪🇸', name: 'Español' },
+    { code: 'de', label: '🇩🇪', name: 'Deutsch' },
+    { code: 'ru', label: '🇷🇺', name: 'Русский' }
 ];

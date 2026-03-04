@@ -21,7 +21,8 @@ let state = {
     scores: [''],
     lang: 'it',
     theme: 'light',
-    formatMode: 'half' // 'half' or 'decimal'
+    formatMode: 'half', // 'half' or 'decimal'
+    micId: 'default'
 };
 
 // DOM Elements
@@ -37,13 +38,15 @@ const elements = {
     resSuggested: document.getElementById('resSuggested'),
     resSummary: document.getElementById('resSummary'),
     langSelect: document.getElementById('langSelect'),
-    themeToggle: document.getElementById('themeToggle'),
-    themeIcon: document.getElementById('themeIcon'),
+    themeToggleOptions: document.getElementById('themeToggleOptions'),
+    sunIcon: document.getElementById('sunIcon'),
+    moonIcon: document.getElementById('moonIcon'),
     voiceToggle: document.getElementById('voiceToggle'),
     formatSwitch: document.getElementById('formatSwitch'),
     gradeFlipCard: document.getElementById('gradeFlipCard'),
     resSuggestedBackVal: document.getElementById('resSuggestedBackVal'),
     heartSurprise: document.getElementById('heartEasterEgg'),
+    micSelect: document.getElementById('micSelect'),
     recordingModal: new bootstrap.Modal(document.getElementById('recordingModal')),
     audioWaveCanvas: document.getElementById('audioWaveCanvas'),
     rawVoiceDebug: document.getElementById('rawVoiceDebug'),
@@ -56,6 +59,7 @@ const elements = {
 function init() {
     loadState();
     populateLangSelect();
+    populateMicSelect();
     elements.maxScore.value = state.maxScore;
     renderScores();
     updateTranslations();
@@ -64,12 +68,44 @@ function init() {
     calculate();
 }
 
+async function populateMicSelect() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const mics = devices.filter(device => device.kind === 'audioinput');
+
+        const t = translations[state.lang];
+        elements.micSelect.innerHTML = `<option value="default" id="lblDefaultMic">${t.lblDefaultMic || 'Predefinito'}</option>`;
+
+        let foundSaved = false;
+        mics.forEach((mic, index) => {
+            if (mic.deviceId && mic.deviceId !== 'default' && mic.deviceId !== 'communications') {
+                const option = document.createElement('option');
+                option.value = mic.deviceId;
+                option.textContent = mic.label || `Microfono ${index + 1}`;
+                elements.micSelect.appendChild(option);
+                if (state.micId === mic.deviceId) foundSaved = true;
+            }
+        });
+
+        if (foundSaved) {
+            elements.micSelect.value = state.micId;
+        } else {
+            state.micId = 'default';
+            elements.micSelect.value = 'default';
+            saveState();
+        }
+    } catch (err) {
+        console.error("Error enumerating mics:", err);
+    }
+}
+
 function populateLangSelect() {
     elements.langSelect.innerHTML = '';
     availableLanguages.forEach(lang => {
         const option = document.createElement('option');
         option.value = lang.code;
-        option.textContent = lang.label;
+        // Provide the full extended name plus the emoji
+        option.textContent = `${lang.label} - ${lang.name || lang.code.toUpperCase()}`;
         elements.langSelect.appendChild(option);
     });
 }
@@ -249,6 +285,15 @@ function updateTranslations() {
     document.getElementById('lblSuggestedBack').textContent = t.lblSuggested;
     document.getElementById('lblSummary').textContent = t.lblSummary;
 
+    // Settings Modal translations
+    if (document.getElementById('settingsModalLabel')) {
+        document.getElementById('settingsModalLabel').textContent = t.lblSettingsTitle;
+        document.getElementById('lblMicrophone').textContent = t.lblMicrophone;
+        document.getElementById('lblTheme').textContent = t.lblTheme;
+        document.getElementById('lblLanguage').textContent = t.lblLanguage;
+        document.getElementById('lblDefaultMic').textContent = t.lblDefaultMic;
+    }
+
     // Modal translations
     document.getElementById('helpModalLabel').textContent = t.helpTitle;
     document.getElementById('helpIntro').textContent = t.helpIntro;
@@ -275,7 +320,6 @@ function updateTranslations() {
 
 function applyTheme() {
     elements.html.setAttribute('data-theme', state.theme);
-    elements.themeIcon.className = state.theme === 'light' ? 'bi bi-moon-fill fs-4' : 'bi bi-sun-fill fs-4';
 }
 
 // Event Listeners
@@ -312,11 +356,20 @@ elements.langSelect.addEventListener('change', (e) => {
     saveState();
 });
 
-elements.themeToggle.addEventListener('click', () => {
+elements.themeToggleOptions.addEventListener('click', () => {
     state.theme = state.theme === 'light' ? 'dark' : 'light';
     applyTheme();
     saveState();
 });
+
+elements.micSelect.addEventListener('change', (e) => {
+    state.micId = e.target.value;
+    saveState();
+});
+
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+    navigator.mediaDevices.addEventListener('devicechange', populateMicSelect);
+}
 
 function applyFormatMode() {
     const isDecimal = state.formatMode === 'decimal';
@@ -620,7 +673,12 @@ function initAudioWave() {
     const canvasCtx = canvas.getContext("2d");
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ audio: true })
+        const constraints = { audio: true };
+        if (state.micId && state.micId !== 'default') {
+            constraints.audio = { deviceId: { exact: state.micId } };
+        }
+
+        navigator.mediaDevices.getUserMedia(constraints)
             .then(function (stream) {
                 mediaStream = stream;
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
