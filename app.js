@@ -801,6 +801,46 @@ function initAudioWave() {
     const canvas = elements.audioWaveCanvas;
     const canvasCtx = canvas.getContext("2d");
 
+    // On mobile devices, getUserMedia often requests an exclusive lock on the microphone,
+    // which instantly crashes or pauses SpeechRecognition. We should skip the audio wave on mobile.
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        let phase = 0;
+        function drawSimulated() {
+            animationId = requestAnimationFrame(drawSimulated);
+
+            canvasCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+            canvasCtx.lineWidth = 2;
+            canvasCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || "#3498db";
+            canvasCtx.beginPath();
+
+            let sliceWidth = canvas.width / 50;
+            let x = 0;
+            phase += 0.15; // Speed of the wave
+
+            for (let i = 0; i <= 50; i++) {
+                // Generate a pseudo-random looking sine wave
+                let amplitude = Math.sin(phase + i * 0.2) * Math.cos(phase * 0.5 + i * 0.1) * (canvas.height / 3);
+                let y = (canvas.height / 2) + amplitude;
+
+                if (i === 0) {
+                    canvasCtx.moveTo(x, y);
+                } else {
+                    canvasCtx.lineTo(x, y);
+                }
+                x += sliceWidth;
+            }
+
+            canvasCtx.stroke();
+        }
+
+        drawSimulated();
+        return;
+    }
+
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const constraints = { audio: true };
         if (state.micId && state.micId !== 'default') {
