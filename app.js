@@ -171,6 +171,14 @@ function calculate() {
             spokenSuggested = spokenSuggested.replace(' ½', halfStr).replace('½', halfStr);
         }
 
+        if (spokenSuggested.includes('-')) {
+            const minusStr = translations[state.lang].lblSpeakMinus || " meno";
+            spokenSuggested = spokenSuggested.replace('-', minusStr);
+        } else if (spokenSuggested.includes('+')) {
+            const plusStr = translations[state.lang].lblSpeakPlus || " più";
+            spokenSuggested = spokenSuggested.replace('+', plusStr);
+        }
+
         // Prepare spoken values for potential speech synthesis
         state.currentResults = {
             summary: `${sum} su ${max}`,
@@ -335,6 +343,7 @@ function updateTranslations() {
     document.getElementById('helpFeatureEnter').innerHTML = t.helpFeatureEnter;
     document.getElementById('helpFeatureVoice').innerHTML = t.helpFeatureVoice;
     document.getElementById('helpFeatureVoiceStop').innerHTML = t.helpFeatureVoiceStop;
+    document.getElementById('helpFeatureSpeak').innerHTML = t.helpFeatureSpeak;
     document.getElementById('helpFeatureFormat').innerHTML = t.helpFeatureFormat;
     document.getElementById('helpFeatureSurprise').innerHTML = t.helpFeatureSurprise;
     document.getElementById('btnCloseModal').textContent = t.btnClose;
@@ -388,6 +397,7 @@ elements.resetAll.addEventListener('click', () => {
 elements.langSelect.addEventListener('change', (e) => {
     state.lang = e.target.value;
     updateTranslations();
+    calculate();
     saveState();
 });
 

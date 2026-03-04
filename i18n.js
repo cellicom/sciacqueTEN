@@ -20,6 +20,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Invio rapido:</strong> Premi il tasto 'Invio' mentre scrivi un punteggio per aggiungerne automaticamente uno nuovo.",
         helpFeatureVoice: "<strong>Comandi Vocali:</strong> Clicca sul microfono per iniziare. Pronuncia i numeri per aggiungerli alla lista.",
         helpFeatureVoiceStop: "<strong>Fermati:</strong> Pronuncia 'Stop' o 'Ferma' per terminare la registrazione vocale.",
+        helpFeatureSpeak: "<strong>Lettura Vocale:</strong> Nelle impostazioni puoi abilitare la lettura ad alta voce dei risultati al termine di una registrazione.",
         helpFeatureFormat: "<strong>Formato Voti:</strong> Usa lo switch in alto a destra nei risultati per scegliere tra il formato '½' e '.5'.",
         helpFeatureSurprise: "<strong>Sorpresa:</strong> Prova a cercare un piccolo segreto nel footer della pagina...",
         btnClose: "Chiudi",
@@ -43,7 +44,9 @@ window.translations = {
         lblSpeakFloor: "Difetto",
         lblSpeakCeil: "Eccesso",
         lblSpeakHalf: " e mezzo",
-        lblSpeakHalfStandalone: "mezzo"
+        lblSpeakHalfStandalone: "mezzo",
+        lblSpeakMinus: " meno",
+        lblSpeakPlus: " più"
     },
     en: {
         lblMaxScore: "Maximum Score",
@@ -66,6 +69,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Quick Add:</strong> Press 'Enter' while typing a score to automatically add a new one.",
         helpFeatureVoice: "<strong>Voice Commands:</strong> Click the microphone to start. Speak numbers to add them to the list.",
         helpFeatureVoiceStop: "<strong>Stop Recording:</strong> Say 'Stop' or 'Halt' to end voice recording.",
+        helpFeatureSpeak: "<strong>Voice Output:</strong> In the settings you can enable reading aloud the results at the end of a recording.",
         helpFeatureFormat: "<strong>Grade Format:</strong> Use the switch in the top right of the results to choose between '½' and '.5' formats.",
         helpFeatureSurprise: "<strong>Surprise:</strong> Try to find a little secret in the page footer...",
         btnClose: "Close",
@@ -89,7 +93,9 @@ window.translations = {
         lblSpeakFloor: "Floor",
         lblSpeakCeil: "Ceiling",
         lblSpeakHalf: " and a half",
-        lblSpeakHalfStandalone: "half"
+        lblSpeakHalfStandalone: "half",
+        lblSpeakMinus: " minus",
+        lblSpeakPlus: " plus"
     },
     fr: {
         lblMaxScore: "Score Maximum",
@@ -112,6 +118,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Ajout rapide :</strong> Appuyez sur 'Entrée' pendant la saisie d'un score pour en ajouter un nouveau automatiquement.",
         helpFeatureVoice: "<strong>Commandes vocales :</strong> Cliquez sur le microphone pour commencer. Prononcez les chiffres pour les ajouter à la liste.",
         helpFeatureVoiceStop: "<strong>Arrêter l'enregistrement :</strong> Dites 'Stop' ou 'Arrêter' pour terminer l'enregistrement vocal.",
+        helpFeatureSpeak: "<strong>Sortie vocale :</strong> Dans les paramètres, vous pouvez activer la lecture à voix haute des résultats à la fin d'un enregistrement.",
         helpFeatureFormat: "<strong>Format des notes :</strong> Utilisez le commutateur en haut à droite pour choisir entre les formats '½' et '.5'.",
         helpFeatureSurprise: "<strong>Surprise :</strong> Essayez de trouver un petit secret dans le bas de la page...",
         btnClose: "Fermer",
@@ -135,7 +142,9 @@ window.translations = {
         lblSpeakFloor: "Arrondi inférieur",
         lblSpeakCeil: "Arrondi supérieur",
         lblSpeakHalf: " et demi",
-        lblSpeakHalfStandalone: "demi"
+        lblSpeakHalfStandalone: "demi",
+        lblSpeakMinus: " moins",
+        lblSpeakPlus: " plus"
     },
     es: {
         lblMaxScore: "Puntuación Máxima",
@@ -158,6 +167,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Adición rápida:</strong> Presiona 'Enter' mientras escribes una puntuación para añadir automáticamente una nueva.",
         helpFeatureVoice: "<strong>Comandos de voz:</strong> Haz clic en el micrófono para empezar. Di los números para añadirlos a la lista.",
         helpFeatureVoiceStop: "<strong>Detener grabación:</strong> Di 'Stop' o 'Parar' para terminar la grabación de voz.",
+        helpFeatureSpeak: "<strong>Salida de voz:</strong> En los ajustes puedes habilitar la lectura en voz alta de los resultados al final de una grabación.",
         helpFeatureFormat: "<strong>Formato de notas:</strong> Usa el interruptor arriba a la derecha para elegir entre los formatos '½' y '.5'.",
         helpFeatureSurprise: "<strong>Sorpresa:</strong> Intenta encontrar un pequeño secreto en el pie de página...",
         btnClose: "Cerrar",
@@ -181,7 +191,9 @@ window.translations = {
         lblSpeakFloor: "Redondeo a la baja",
         lblSpeakCeil: "Redondeo al alza",
         lblSpeakHalf: " y medio",
-        lblSpeakHalfStandalone: "medio"
+        lblSpeakHalfStandalone: "medio",
+        lblSpeakMinus: " menos",
+        lblSpeakPlus: " más"
     },
     de: {
         lblMaxScore: "Maximale Punktzahl",
@@ -204,6 +216,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Schnelles Hinzufügen:</strong> Drücken Sie die Eingabetaste, während Sie eine Punktzahl eingeben, um automatisch eine neue hinzuzufügen.",
         helpFeatureVoice: "<strong>Sprachbefehle:</strong> Klicken Sie auf das Mikrofon, um zu starten. Sprechen Sie Zahlen aus, um sie der Liste hinzuzufügen.",
         helpFeatureVoiceStop: "<strong>Aufnahme stoppen:</strong> Sagen Sie 'Stopp' oder 'Halt', um die Sprachaufnahme zu beenden.",
+        helpFeatureSpeak: "<strong>Sprachausgabe:</strong> In den Einstellungen können Sie das Vorlesen der Ergebnisse am Ende einer Aufnahme aktivieren.",
         helpFeatureFormat: "<strong>Notenformat:</strong> Verwenden Sie den Schalter oben rechts, um zwischen den Formaten '½' und '.5' zu wählen.",
         helpFeatureSurprise: "<strong>Überraschung:</strong> Versuchen Sie, ein kleines Geheimnis in der Fußzeile der Seite zu finden...",
         btnClose: "Schließen",
@@ -227,7 +240,9 @@ window.translations = {
         lblSpeakFloor: "Abgerundet",
         lblSpeakCeil: "Aufgerundet",
         lblSpeakHalf: " und ein halb",
-        lblSpeakHalfStandalone: "einhalb"
+        lblSpeakHalfStandalone: "einhalb",
+        lblSpeakMinus: " minus",
+        lblSpeakPlus: " plus"
     },
     ru: {
         lblMaxScore: "Максим. балл",
@@ -250,6 +265,7 @@ window.translations = {
         helpFeatureEnter: "<strong>Быстрое добавление:</strong> Нажмите 'Enter' при вводе балла, чтобы автоматически добавить новый.",
         helpFeatureVoice: "<strong>Голосовые команды:</strong> Нажмите на микрофон, чтобы начать. Произносите числа, чтобы добавить их в список.",
         helpFeatureVoiceStop: "<strong>Остановить запись:</strong> Скажите 'Стоп' или 'Хватит', чтобы завершить запись голоса.",
+        helpFeatureSpeak: "<strong>Голосовой вывод:</strong> В настройках вы можете включить озвучивание результатов в конце записи.",
         helpFeatureFormat: "<strong>Формат оценок:</strong> Используйте переключатель вверху справа, чтобы выбрать формат '½' или '.5'.",
         helpFeatureSurprise: "<strong>Сюрприз:</strong> Попробуйте найти маленький секрет в подвале страницы...",
         btnClose: "Закрыть",
@@ -273,7 +289,9 @@ window.translations = {
         lblSpeakFloor: "Округление вниз",
         lblSpeakCeil: "Округление вверх",
         lblSpeakHalf: " с половиной",
-        lblSpeakHalfStandalone: "половина"
+        lblSpeakHalfStandalone: "половина",
+        lblSpeakMinus: " с минусом",
+        lblSpeakPlus: " с плюсом"
     }
 };
 

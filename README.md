@@ -2,6 +2,8 @@
 
 A modern, fast, and light web-based tool designed for teachers to convert student exam scores into a base-10 scale (typically used in Italian schools).
 
+**🔗 Live Demo: [https://cellicom.github.io/sciacqueTEN/](https://cellicom.github.io/sciacqueTEN/)**
+
 ## 🚀 Features
 
 - **Real-Time Calculation**: See results instantly as you type.
