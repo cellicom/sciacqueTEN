@@ -59,6 +59,7 @@ const elements = {
     rawVoiceDebug: document.getElementById('rawVoiceDebug'),
     btnStopRecordingModal: document.getElementById('btnStopRecordingModal'),
     btnRestartRecordingModal: document.getElementById('btnRestartRecordingModal'), // New button
+    btnFinishRecordingModal: document.getElementById('btnFinishRecordingModal'),
     btnPlayResults: document.getElementById('btnPlayResults'),
     html: document.documentElement
 };
@@ -354,6 +355,9 @@ function updateTranslations() {
     if (document.getElementById('lblRestartRecordingBtn')) {
         document.getElementById('lblRestartRecordingBtn').textContent = t.lblRestartRecordingBtn;
     }
+    if (document.getElementById('lblFinishRecordingBtn')) {
+        document.getElementById('lblFinishRecordingBtn').textContent = t.lblFinishRecordingBtn;
+    }
 
     elements.maxScore.placeholder = t.placeholderMax;
     elements.langSelect.value = state.lang;
@@ -491,6 +495,7 @@ if (elements.heartSurprise) {
 let recognition = null;
 let isRecording = false;
 let audioCtx, analyser, dataArray, animationId, mediaStream;
+let lastProcessedFullText = "";
 
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -500,6 +505,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
     recognition.onstart = () => {
         isRecording = true;
+        lastProcessedFullText = "";
         elements.voiceToggle.classList.remove('btn-recording'); // remove spinner
         elements.voiceToggle.classList.add('btn-danger'); // Add active color
         elements.recordingModal.show();
@@ -513,19 +519,33 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
     recognition.onresult = (event) => {
+        let currentFullFinal = '';
         let interimTranscript = '';
-        let finalTranscript = '';
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
+        for (let i = 0; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
-                finalTranscript += event.results[i][0].transcript;
-                processVoiceInput(event.results[i][0].transcript);
+                currentFullFinal += event.results[i][0].transcript + " ";
             } else {
-                interimTranscript += event.results[i][0].transcript;
+                interimTranscript += event.results[i][0].transcript + " ";
             }
         }
 
-        elements.rawVoiceDebug.innerHTML = `<strong>${finalTranscript}</strong> <span class="text-muted">${interimTranscript}</span>`;
+        let currentLower = currentFullFinal.toLowerCase().trim();
+        let lastLower = lastProcessedFullText.toLowerCase().trim();
+
+        let newTextToProcess = "";
+        if (lastLower.length > 0 && currentLower.startsWith(lastLower)) {
+            newTextToProcess = currentLower.substring(lastLower.length).trim();
+        } else if (currentLower !== lastLower) {
+            newTextToProcess = currentLower;
+        }
+
+        if (newTextToProcess.length > 0) {
+            processVoiceInput(newTextToProcess);
+            lastProcessedFullText = currentFullFinal;
+        }
+
+        elements.rawVoiceDebug.innerHTML = `<strong>${currentFullFinal}</strong> <span class="text-muted">${interimTranscript}</span>`;
     };
 
     recognition.onend = () => {
@@ -536,6 +556,9 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             elements.btnStopRecordingModal.style.display = 'none';
             if (elements.btnRestartRecordingModal) {
                 elements.btnRestartRecordingModal.style.display = 'inline-block';
+            }
+            if (elements.btnFinishRecordingModal) {
+                elements.btnFinishRecordingModal.style.display = 'inline-block';
                 elements.rawVoiceDebug.innerHTML += `<br><span class="text-danger small">${translations[state.lang].lblVoicePaused}</span>`;
             }
         } else {
@@ -742,6 +765,7 @@ function stopVoiceRecording() {
     }
     stopAudioWave();
     elements.recordingModal.hide();
+    if (elements.btnFinishRecordingModal) elements.btnFinishRecordingModal.style.display = 'none';
     if (elements.voiceToggle) {
         elements.voiceToggle.classList.remove('btn-danger', 'btn-recording');
         elements.voiceToggle.innerHTML = '<i class="bi bi-mic-fill"></i>';
@@ -931,6 +955,12 @@ if (elements.btnRestartRecordingModal) {
         } catch (e) {
             console.error(e);
         }
+    });
+}
+
+if (elements.btnFinishRecordingModal) {
+    elements.btnFinishRecordingModal.addEventListener('click', () => {
+        stopVoiceRecording();
     });
 }
 
