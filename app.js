@@ -496,6 +496,7 @@ let recognition = null;
 let isRecording = false;
 let audioCtx, analyser, dataArray, animationId, mediaStream;
 let lastProcessedFullText = "";
+let voiceLastResultIndex = 0;
 
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -506,6 +507,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     recognition.onstart = () => {
         isRecording = true;
         lastProcessedFullText = "";
+        voiceLastResultIndex = 0;
         elements.voiceToggle.classList.remove('btn-recording'); // remove spinner
         elements.voiceToggle.classList.add('btn-danger'); // Add active color
         elements.recordingModal.show();
@@ -519,33 +521,33 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
     recognition.onresult = (event) => {
-        let currentFullFinal = '';
         let interimTranscript = '';
+        let newFinalTranscript = '';
+        let fullCurrentText = '';
+
+        if (event.results.length < voiceLastResultIndex) {
+            voiceLastResultIndex = 0;
+        }
 
         for (let i = 0; i < event.results.length; ++i) {
+            let resultText = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
-                currentFullFinal += event.results[i][0].transcript + " ";
+                fullCurrentText += resultText + " ";
+                if (i >= voiceLastResultIndex) {
+                    newFinalTranscript += resultText + " ";
+                    voiceLastResultIndex = i + 1;
+                }
             } else {
-                interimTranscript += event.results[i][0].transcript + " ";
+                interimTranscript += resultText + " ";
             }
         }
 
-        let currentLower = currentFullFinal.toLowerCase().trim();
-        let lastLower = lastProcessedFullText.toLowerCase().trim();
-
-        let newTextToProcess = "";
-        if (lastLower.length > 0 && currentLower.startsWith(lastLower)) {
-            newTextToProcess = currentLower.substring(lastLower.length).trim();
-        } else if (currentLower !== lastLower) {
-            newTextToProcess = currentLower;
+        if (newFinalTranscript.trim().length > 0) {
+            processVoiceInput(newFinalTranscript);
+            lastProcessedFullText += newFinalTranscript;
         }
 
-        if (newTextToProcess.length > 0) {
-            processVoiceInput(newTextToProcess);
-            lastProcessedFullText = currentFullFinal;
-        }
-
-        elements.rawVoiceDebug.innerHTML = `<strong>${currentFullFinal}</strong> <span class="text-muted">${interimTranscript}</span>`;
+        elements.rawVoiceDebug.innerHTML = `<strong>${fullCurrentText}</strong> <span class="text-muted">${interimTranscript}</span>`;
     };
 
     recognition.onend = () => {
