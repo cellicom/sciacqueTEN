@@ -523,30 +523,56 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     recognition.onresult = (event) => {
         let interimTranscript = '';
         let newFinalTranscript = '';
-        let fullCurrentText = '';
+        
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        if (event.results.length < voiceLastResultIndex) {
-            voiceLastResultIndex = 0;
-        }
+        let finalResultCount = 0;
+        let normalizedFinals = [];
+        let rawFinals = [];
 
         for (let i = 0; i < event.results.length; ++i) {
             let resultText = event.results[i][0].transcript;
+            
             if (event.results[i].isFinal) {
-                fullCurrentText += resultText + " ";
-                if (i >= voiceLastResultIndex) {
-                    newFinalTranscript += resultText + " ";
-                    voiceLastResultIndex = i + 1;
+                finalResultCount++;
+                let cleanText = resultText.trim();
+                rawFinals.push(cleanText);
+                
+                // Normalization for Mobile Browser Bug (cumulative finals in continuous mode)
+                if (isMobile && rawFinals.length > 1) {
+                    let prevText = rawFinals[rawFinals.length - 2];
+                    if (prevText.length > 0 && cleanText.toLowerCase().startsWith(prevText.toLowerCase())) {
+                        let diff = cleanText.substring(prevText.length).trim();
+                        normalizedFinals.push(diff);
+                    } else {
+                        normalizedFinals.push(cleanText);
+                    }
+                } else {
+                    normalizedFinals.push(cleanText);
                 }
             } else {
                 interimTranscript += resultText + " ";
             }
         }
 
+        if (finalResultCount < voiceLastResultIndex) {
+            voiceLastResultIndex = 0;
+        }
+
+        for (let i = voiceLastResultIndex; i < normalizedFinals.length; ++i) {
+            if (normalizedFinals[i].length > 0) {
+                newFinalTranscript += normalizedFinals[i] + " ";
+            }
+        }
+        
+        voiceLastResultIndex = finalResultCount;
+
         if (newFinalTranscript.trim().length > 0) {
             processVoiceInput(newFinalTranscript);
             lastProcessedFullText += newFinalTranscript;
         }
 
+        let fullCurrentText = normalizedFinals.filter(t => t.length > 0).join(" ");
         elements.rawVoiceDebug.innerHTML = `<strong>${fullCurrentText}</strong> <span class="text-muted">${interimTranscript}</span>`;
     };
 
