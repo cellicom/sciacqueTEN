@@ -523,7 +523,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     recognition.onresult = (event) => {
         let interimTranscript = '';
         let newFinalTranscript = '';
-        
+
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         let finalResultCount = 0;
@@ -532,12 +532,12 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
         for (let i = 0; i < event.results.length; ++i) {
             let resultText = event.results[i][0].transcript;
-            
+
             if (event.results[i].isFinal) {
                 finalResultCount++;
                 let cleanText = resultText.trim();
                 rawFinals.push(cleanText);
-                
+
                 // Normalization for Mobile Browser Bug (cumulative finals in continuous mode)
                 if (isMobile && rawFinals.length > 1) {
                     let prevText = rawFinals[rawFinals.length - 2];
@@ -564,7 +564,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 newFinalTranscript += normalizedFinals[i] + " ";
             }
         }
-        
+
         voiceLastResultIndex = finalResultCount;
 
         if (newFinalTranscript.trim().length > 0) {
@@ -729,10 +729,7 @@ function processVoiceInput(text) {
     const localizedStops = stopWordsByLang[state.lang] || [];
     const isStopLocalized = localizedStops.some(word => lowerText.includes(word));
 
-    if (isStopUniversal || isStopLocalized) {
-        stopVoiceRecording();
-        return;
-    }
+    let shouldStop = isStopUniversal || isStopLocalized;
 
     // Replace multi-word phrases first
     lowerText = lowerText.replace(/\b(e mezzo|and a half)\b/g, '.5');
@@ -765,6 +762,10 @@ function processVoiceInput(text) {
         renderScores();
         calculate();
         saveState();
+    }
+
+    if (shouldStop) {
+        stopVoiceRecording();
     }
 }
 
