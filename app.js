@@ -141,6 +141,17 @@ function saveState() {
 }
 
 // Logic
+function getMappedSuggestedValue(val) {
+    if (val === 10) return 10;
+    if (val === 0) return 0;
+    const base = Math.floor(val);
+    const fraction = Number((val - base).toFixed(4));
+    if (fraction === 0) return base;
+    if (fraction <= 0.25) return base + 0.25;
+    if (fraction <= 0.75) return base + 0.5;
+    return base + 0.75;
+}
+
 function calculate() {
     const sum = state.scores.reduce((acc, curr) => acc + (parseFloat(curr) || 0), 0);
     const max = parseFloat(state.maxScore) || 0;
@@ -191,7 +202,7 @@ function calculate() {
 
         // Color coding logic
         const decimalPass = result >= 6;
-        const suggestedVal = Math.round(result * 4) / 4;
+        const suggestedVal = getMappedSuggestedValue(result);
         const suggestedPass = suggestedVal >= 6;
 
         const lblSuggested = document.getElementById('lblSuggested');
@@ -239,9 +250,8 @@ function calculate() {
 }
 
 function getSuggestedGrade(val, forceDecimal = false) {
-    // Round to nearest 0.25
-    const rounded = Math.round(val * 4) / 4;
-    const grade = schoolGrades.find(g => Math.abs(g.value - rounded) < 0.001);
+    const suggestedValue = getMappedSuggestedValue(val);
+    const grade = schoolGrades.find(g => Math.abs(g.value - suggestedValue) < 0.001);
 
     if (grade) {
         if (forceDecimal && grade.label === '½') {
